@@ -1,7 +1,6 @@
 # build
 bin
 obj
-Properties
 
 # ide
 .vs

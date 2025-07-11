@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GFMS (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "GFMS (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
