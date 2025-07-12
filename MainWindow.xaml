@@ -13,37 +13,65 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <NavigationView
-        x:Name="mainNavigationView"
-        IsBackButtonVisible="Collapsed"
-        IsSettingsVisible="False"
-        PaneDisplayMode="Top"
-        SelectionChanged="mainNavigationView_SelectionChanged"
-        SelectionFollowsFocus="Enabled">
-        <NavigationView.MenuItems>
-            <NavigationViewItem
-                Content="主页"
-                Icon="Home"
-                Tag="HomePage" />
-            <NavigationViewItem
-                Content="数据收集"
-                Icon="Home"
-                Tag="DataCollectionPage" />
-            <NavigationViewItem
-                Content="档案管理"
-                Icon="Home"
-                Tag="FileManagementPage" />
-            <NavigationViewItem
-                Content="传递流程"
-                Icon="Home"
-                Tag="FileProgressPage" />
-            <NavigationViewItem
-                Content="查询"
-                Icon="Home"
-                Tag="SearchPage" />
-
-        </NavigationView.MenuItems>
-        <Frame x:Name="contentFrame" />
-    </NavigationView>
-
+    <Grid>
+        <!--  主内容区  -->
+        <NavigationView
+            x:Name="MainNavigationView"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            PaneDisplayMode="Top"
+            SelectionChanged="MainNavigationView_SelectionChanged"
+            SelectionFollowsFocus="Enabled">
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                    Content="主页"
+                    Icon="Home"
+                    Tag="HomePage" />
+                <NavigationViewItem
+                    Content="数据收集"
+                    Icon="AllApps"
+                    Tag="DataCollectionPage" />
+                <NavigationViewItem
+                    Content="档案管理"
+                    Icon="Library"
+                    Tag="FileManagementPage" />
+                <NavigationViewItem
+                    Content="档案转递"
+                    Icon="Rotate"
+                    Tag="FileProgressPage" />
+                <NavigationViewItem
+                    Content="查询"
+                    Icon="Find"
+                    Tag="SearchPage" />
+            </NavigationView.MenuItems>
+            <Frame x:Name="contentFrame" />
+        </NavigationView>
+        <!--  右上角标题栏  -->
+        <StackPanel
+            x:Name="AppTitleBar"
+            Margin="0,8,8,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Orientation="Horizontal"
+            Spacing="8">
+            <Button
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Click="MinimizeButton_Click">
+                <FontIcon Glyph="&#xE921;" />
+            </Button>
+            <Button
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Click="MaximizeButton_Click">
+                <FontIcon Glyph="&#xE922;" />
+            </Button>
+            <Button
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Click="CloseButton_Click">
+                <FontIcon Glyph="&#xE8BB;" />
+            </Button>
+        </StackPanel>
+    </Grid>
 </Window>

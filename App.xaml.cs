@@ -47,7 +47,6 @@ namespace GFMS
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _window = new MainWindow();
-            _window.ExtendsContentIntoTitleBar = true;
             _window.Activate();
         }
         private void HandleException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
