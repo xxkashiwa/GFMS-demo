@@ -24,22 +24,27 @@
             SelectionFollowsFocus="Enabled">
             <NavigationView.MenuItems>
                 <NavigationViewItem
+                    x:Name="HomePageNavigationItem"
                     Content="主页"
                     Icon="Home"
                     Tag="HomePage" />
                 <NavigationViewItem
+                    x:Name="DataCollectionPageNavigationItem"
                     Content="数据收集"
                     Icon="AllApps"
                     Tag="DataCollectionPage" />
                 <NavigationViewItem
+                    x:Name="FileManagementPageNavigationItem"
                     Content="档案管理"
                     Icon="Library"
                     Tag="FileManagementPage" />
                 <NavigationViewItem
+                    x:Name="FileProgressPageNavigationItem"
                     Content="档案转递"
                     Icon="Rotate"
                     Tag="FileProgressPage" />
                 <NavigationViewItem
+                    x:Name="SearchPageNavigationItem"
                     Content="查询"
                     Icon="Find"
                     Tag="SearchPage" />

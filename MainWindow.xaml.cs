@@ -1,4 +1,6 @@
+using GFMS.Models;
 using GFMS.Pages;
+using GFMS.Services;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -34,8 +36,18 @@ namespace GFMS
             AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
             SetTitleBar(AppTitleBar);
             contentFrame.Navigate(typeof(HomePage));
-        }
 
+            UserManager.Instance.OnAuthedUserChanged += UserManager_OnAuthedUserChanged;
+
+        }
+        private void UserManager_OnAuthedUserChanged(object sender, EventArgs e)
+
+        {
+            if (UserManager.Instance.IsAuthed)
+            {
+                HomePageNavigationItem.Content = "µÇÂ½ÑéÖ¤le";
+            }
+        }
         private void MainNavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             var pageTag = args.SelectedItemContainer.Tag as string;
@@ -48,6 +60,12 @@ namespace GFMS
                 "SearchPage" => typeof(SearchPage),
                 _ => null
             };
+            // todo delete this line
+            if (pageTag == "DataCollectionPage")
+            {
+                var user = new User { UserId = "12312" };
+                UserManager.Instance.AuthenticateUser(user);
+            }
             if (pageType != null)
             {
                 contentFrame.Navigate(pageType);

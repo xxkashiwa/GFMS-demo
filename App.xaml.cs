@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using GFMS.Services;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -47,9 +48,10 @@ namespace GFMS
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _window = new MainWindow();
+            UserManager.Instance.LoadLoginState();
             _window.Activate();
         }
-        private void HandleException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        public void HandleException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             e.Handled = true; //Don't crash the app.
 
