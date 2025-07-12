@@ -27,6 +27,7 @@ namespace GFMS
         public MainWindow()
         {
             InitializeComponent();
+            this.SetTitleBar(mainNavigationView);
             contentFrame.Navigate(typeof(HomePage));
         }
 
@@ -36,6 +37,10 @@ namespace GFMS
             Type? pageType = pageTag switch
             {
                 "HomePage" => typeof(HomePage),
+                "DataCollectionPage" => typeof(DataCollectionPage),
+                "FileManagementPage" => typeof(FileManagementPage),
+                "FileProgressPage" => typeof(FileProgressPage),
+                "SearchPage" => typeof(SearchPage),
                 _ => null
             };
             if (pageType != null)

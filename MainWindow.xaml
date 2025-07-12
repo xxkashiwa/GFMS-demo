@@ -13,12 +13,35 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <NavigationView x:Name="mainNavigationView" SelectionChanged="mainNavigationView_SelectionChanged">
+    <NavigationView
+        x:Name="mainNavigationView"
+        IsBackButtonVisible="Collapsed"
+        IsSettingsVisible="False"
+        PaneDisplayMode="Top"
+        SelectionChanged="mainNavigationView_SelectionChanged"
+        SelectionFollowsFocus="Enabled">
         <NavigationView.MenuItems>
             <NavigationViewItem
                 Content="主页"
                 Icon="Home"
                 Tag="HomePage" />
+            <NavigationViewItem
+                Content="数据收集"
+                Icon="Home"
+                Tag="DataCollectionPage" />
+            <NavigationViewItem
+                Content="档案管理"
+                Icon="Home"
+                Tag="FileManagementPage" />
+            <NavigationViewItem
+                Content="传递流程"
+                Icon="Home"
+                Tag="FileProgressPage" />
+            <NavigationViewItem
+                Content="查询"
+                Icon="Home"
+                Tag="SearchPage" />
+
         </NavigationView.MenuItems>
         <Frame x:Name="contentFrame" />
     </NavigationView>
