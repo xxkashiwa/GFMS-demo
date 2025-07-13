@@ -10,6 +10,6 @@ namespace GFMS.Models
     {
         public required string UserId { get; set; }
         public string? UserName { get; set; }
-        public string? AuthType { get; set; }
+        public string? GrantedType { get; set; }
     }
 }

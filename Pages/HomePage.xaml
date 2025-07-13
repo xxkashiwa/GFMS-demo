@@ -9,6 +9,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock x:Name="TestLabel" Text="未登陆喵" />
+        <TextBlock x:Name="TestLabel" Text="已经登陆" />
+        <Button Click="Button_Click" Content="logout" />
     </Grid>
 </Page>

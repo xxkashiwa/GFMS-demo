@@ -32,24 +32,77 @@ namespace GFMS
         public MainWindow()
         {
             InitializeComponent();
+
             ExtendsContentIntoTitleBar = true;
             AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Collapsed;
             SetTitleBar(AppTitleBar);
-            contentFrame.Navigate(typeof(HomePage));
 
             UserManager.Instance.OnAuthedUserChanged += UserManager_OnAuthedUserChanged;
+            NavigationWithAuth();
 
         }
-        private void UserManager_OnAuthedUserChanged(object sender, EventArgs e)
-
+        private void NavigationItemsAllEnable()
         {
+            foreach (var obj in MainNavigationView.MenuItems)
+            {
+
+                if (obj is NavigationViewItem item)
+                {
+                    item.IsEnabled = true;
+                }
+            }
+        }
+        private void NavigationItemsDisable(NavigationViewItem[] items)
+        {
+            foreach (var item in items)
+            {
+                item.IsEnabled = false;
+            }
+        }
+
+        private void NavigationWithAuth()
+        {
+            NavigationItemsAllEnable();
             if (UserManager.Instance.IsAuthed)
             {
-                HomePageNavigationItem.Content = "登陆验证le";
+                contentFrame.Navigate(typeof(HomePage));
+
+                // 使用模式匹配简化角色判断
+                NavigationViewItem[] disableItems = UserManager.Instance.AuthedUser!.GrantedType switch
+                {
+                    "Admin" => [],
+                    "Teacher" => [FileProgressPageNavigationItem],
+                    "Student" => [DataCollectionPageNavigationItem],
+                    _ => MainNavigationView.MenuItems.OfType<NavigationViewItem>()
+                        .Where(item => item.Tag as string != "HomePage").ToArray()
+
+                };
+
+                if (disableItems.Length > 0)
+                    NavigationItemsDisable(disableItems);
             }
+            else
+            {
+                contentFrame.Navigate(typeof(AuthPage));
+                MainNavigationView.SelectedItem = HomePageNavigationItem;
+                NavigationItemsDisable(
+                    MainNavigationView.MenuItems.OfType<NavigationViewItem>()
+                        .Where(item => item.Tag as string != "HomePage").ToArray()
+                    );
+            }
+        }
+        private void UserManager_OnAuthedUserChanged(object sender, EventArgs e)
+        {
+            NavigationWithAuth();
         }
         private void MainNavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
+            if (UserManager.Instance.IsAuthed == false && args.SelectedItemContainer.Tag as string != "HomePage")
+            {
+                contentFrame.Navigate(typeof(AuthPage));
+                sender.SelectedItem = HomePageNavigationItem;
+                return;
+            }
             var pageTag = args.SelectedItemContainer.Tag as string;
             Type? pageType = pageTag switch
             {
@@ -60,12 +113,6 @@ namespace GFMS
                 "SearchPage" => typeof(SearchPage),
                 _ => null
             };
-            // todo delete this line
-            if (pageTag == "DataCollectionPage")
-            {
-                var user = new User { UserId = "12312" };
-                UserManager.Instance.AuthenticateUser(user);
-            }
             if (pageType != null)
             {
                 contentFrame.Navigate(pageType);

@@ -30,7 +30,6 @@ namespace GFMS.Services
         public void AuthenticateUser(User user)
         {
             AuthedUser = user;
-            SetAuthedState(user);
         }
 
         public void Logout()
@@ -58,11 +57,11 @@ namespace GFMS.Services
                 AuthedUser = null;
             }
         }
-        private void SetAuthedState(User user)
+        public void SetAuthedState(User user)
         {
             Windows.Storage.ApplicationData.Current.LocalSettings.Values["AuthedUserId"] = user.UserId;
         }
-        private void ClearAuthedState()
+        public void ClearAuthedState()
         {
             Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("AuthedUserId");
         }

@@ -1,3 +1,4 @@
+using GFMS.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -26,6 +27,11 @@ namespace GFMS.Pages
         public HomePage()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            UserManager.Instance.Logout();
         }
     }
 }
