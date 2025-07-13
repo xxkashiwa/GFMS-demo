@@ -12,7 +12,10 @@ namespace GFMS.Services
     {
         private static UserManager? _instance;
         public static UserManager Instance => _instance ??= new UserManager();
-        private UserManager() { }
+        private UserManager()
+        {
+            OnAuthedUserChanged = delegate { }; // Initialize the event with an empty delegate
+        }
 
         private User? _authedUser;
         public bool IsAuthed => _authedUser != null;
@@ -37,7 +40,6 @@ namespace GFMS.Services
             AuthedUser = null;
             ClearAuthedState();
         }
-
 
         public void LoadLoginState()
         {

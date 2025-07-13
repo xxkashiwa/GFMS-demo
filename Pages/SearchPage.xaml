@@ -8,7 +8,636 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <ScrollViewer>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-    </Grid>
+            <!-- 页面标题 -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="查询服务" 
+                          FontSize="32" 
+                          FontWeight="Bold"
+                          Margin="0,0,0,10"/>
+                <TextBlock Text="多条件检索和历史记录查询" 
+                          FontSize="14" 
+                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+
+            <!-- 主要内容区域 -->
+            <Grid Grid.Row="1">
+                <Pivot x:Name="SearchPivot">
+                    
+                    <!-- 高级搜索标签页 -->
+                    <PivotItem Header="高级搜索">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- 搜索条件区 -->
+                            <Border Grid.Row="0" 
+                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                   CornerRadius="8" 
+                                   Padding="20"
+                                   Margin="0,0,0,20">
+                                <StackPanel Spacing="15">
+                                    <TextBlock Text="搜索条件" 
+                                              FontSize="18" 
+                                              FontWeight="SemiBold"/>
+                                    
+                                    <!-- 第一行搜索条件 -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="学号" Margin="0,0,0,5"/>
+                                            <TextBox x:Name="StudentIdSearchBox" PlaceholderText="输入学号"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                                            <TextBlock Text="姓名" Margin="0,0,0,5"/>
+                                            <TextBox x:Name="NameSearchBox" PlaceholderText="输入姓名"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="2" Margin="5,0,5,0">
+                                            <TextBlock Text="专业" Margin="0,0,0,5"/>
+                                            <ComboBox x:Name="MajorSearchCombo" PlaceholderText="选择专业" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="计算机科学与技术"/>
+                                                <ComboBoxItem Content="软件工程"/>
+                                                <ComboBoxItem Content="网络工程"/>
+                                                <ComboBoxItem Content="数据科学与大数据技术"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="3" Margin="10,0,0,0">
+                                            <TextBlock Text="班级" Margin="0,0,0,5"/>
+                                            <ComboBox x:Name="ClassSearchCombo" PlaceholderText="选择班级" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="计科2101"/>
+                                                <ComboBoxItem Content="计科2102"/>
+                                                <ComboBoxItem Content="软工2101"/>
+                                                <ComboBoxItem Content="网工2101"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- 第二行搜索条件 -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                            <TextBlock Text="档案状态" Margin="0,0,0,5"/>
+                                            <ComboBox x:Name="ArchiveStatusCombo" PlaceholderText="选择状态" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="材料收集中"/>
+                                                <ComboBoxItem Content="待审核"/>
+                                                <ComboBoxItem Content="已归档"/>
+                                                <ComboBoxItem Content="已转递"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="1" Margin="5,0,5,0">
+                                            <TextBlock Text="入学年份" Margin="0,0,0,5"/>
+                                            <ComboBox x:Name="EnrollmentYearCombo" PlaceholderText="选择年份" HorizontalAlignment="Stretch">
+                                                <ComboBoxItem Content="2024"/>
+                                                <ComboBoxItem Content="2023"/>
+                                                <ComboBoxItem Content="2022"/>
+                                                <ComboBoxItem Content="2021"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="2" Margin="5,0,5,0">
+                                            <TextBlock Text="毕业时间" Margin="0,0,0,5"/>
+                                            <DatePicker x:Name="GraduationDatePicker"/>
+                                        </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="3" Margin="10,0,0,0">
+                                            <TextBlock Text="操作" Margin="0,0,0,5"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <Button Content="搜索" 
+                                                       Style="{StaticResource AccentButtonStyle}"
+                                                       Padding="20,8"/>
+                                                <Button Content="重置" 
+                                                       Padding="20,8"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 搜索结果区 -->
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="350"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 左侧搜索结果列表 -->
+                                <Border Grid.Column="0" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="0"
+                                       Margin="0,0,10,0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- 结果统计 -->
+                                        <Border Grid.Row="0" 
+                                               Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
+                                               Padding="15,10">
+                                            <StackPanel Orientation="Horizontal" Spacing="20">
+                                                <TextBlock Text="搜索结果：共找到 156 条记录" FontWeight="SemiBold"/>
+                                                <Button Content="导出结果" FontSize="12" Padding="8,4"/>
+                                                <ComboBox SelectedIndex="0" Width="120">
+                                                    <ComboBoxItem Content="按学号排序"/>
+                                                    <ComboBoxItem Content="按姓名排序"/>
+                                                    <ComboBoxItem Content="按专业排序"/>
+                                                    <ComboBoxItem Content="按状态排序"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- 搜索结果列表 -->
+                                        <ListView Grid.Row="1" x:Name="SearchResultsList">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Padding="15,10" 
+                                                           BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                           BorderThickness="0,0,0,1">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="100"/>
+                                                                <ColumnDefinition Width="120"/>
+                                                                <ColumnDefinition Width="180"/>
+                                                                <ColumnDefinition Width="120"/>
+                                                                <ColumnDefinition Width="100"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            
+                                                            <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="2" Text="计算机科学与技术" VerticalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="3" Text="计科2101" VerticalAlignment="Center"/>
+                                                            <Border Grid.Column="4" 
+                                                                   Background="#4CAF50" 
+                                                                   CornerRadius="8" 
+                                                                   Padding="6,2"
+                                                                   HorizontalAlignment="Center">
+                                                                <TextBlock Text="已归档" 
+                                                                          Foreground="White" 
+                                                                          FontSize="11"/>
+                                                            </Border>
+                                                            <Button Grid.Column="5" 
+                                                                   Content="查看详情" 
+                                                                   Style="{StaticResource AccentButtonStyle}"
+                                                                   FontSize="12"
+                                                                   Padding="10,4"
+                                                                   HorizontalAlignment="Left"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+
+                                        <!-- 分页控件 -->
+                                        <Border Grid.Row="2" 
+                                               Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
+                                               Padding="15,10">
+                                            <StackPanel Orientation="Horizontal" 
+                                                       HorizontalAlignment="Center"
+                                                       Spacing="10">
+                                                <Button Content="首页" FontSize="12" Padding="8,4"/>
+                                                <Button Content="上一页" FontSize="12" Padding="8,4"/>
+                                                <TextBlock Text="第 1 页 / 共 16 页" VerticalAlignment="Center"/>
+                                                <Button Content="下一页" FontSize="12" Padding="8,4"/>
+                                                <Button Content="末页" FontSize="12" Padding="8,4"/>
+                                                <ComboBox SelectedIndex="0" Width="80">
+                                                    <ComboBoxItem Content="10条/页"/>
+                                                    <ComboBoxItem Content="20条/页"/>
+                                                    <ComboBoxItem Content="50条/页"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- 右侧详情面板 -->
+                                <Border Grid.Column="1" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="20"
+                                       Margin="10,0,0,0">
+                                    <ScrollViewer>
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="学生档案详情" 
+                                                      FontSize="18" 
+                                                      FontWeight="SemiBold"/>
+                                            
+                                            <!-- 基本信息 -->
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="基本信息" 
+                                                          FontSize="14" 
+                                                          FontWeight="SemiBold" 
+                                                          Foreground="{ThemeResource SystemAccentColor}"/>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="学号：" Margin="0,0,10,5"/>
+                                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="2021001" Margin="0,0,0,5"/>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="姓名：" Margin="0,0,10,5"/>
+                                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="张三" Margin="0,0,0,5"/>
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="专业：" Margin="0,0,10,5"/>
+                                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="计算机科学与技术" Margin="0,0,0,5"/>
+                                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="班级：" Margin="0,0,10,5"/>
+                                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="计科2101" Margin="0,0,0,5"/>
+                                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="入学时间：" Margin="0,0,10,0"/>
+                                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="2021年9月"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <!-- 档案状态 -->
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="档案状态" 
+                                                          FontSize="14" 
+                                                          FontWeight="SemiBold" 
+                                                          Foreground="{ThemeResource SystemAccentColor}"/>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <Border Grid.Row="0" 
+                                                           Background="#4CAF50" 
+                                                           CornerRadius="8" 
+                                                           Padding="10,6"
+                                                           Margin="0,0,0,5"
+                                                           HorizontalAlignment="Left">
+                                                        <TextBlock Text="已归档" 
+                                                                  Foreground="White" 
+                                                                  FontSize="12"/>
+                                                    </Border>
+                                                    
+                                                    <TextBlock Grid.Row="1" Text="归档时间：2024年1月20日" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="2" Text="材料完整性：100%" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="3" Text="审核状态：已通过"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <!-- 材料清单 -->
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="材料清单" 
+                                                          FontSize="14" 
+                                                          FontWeight="SemiBold" 
+                                                          Foreground="{ThemeResource SystemAccentColor}"/>
+                                                
+                                                <StackPanel Spacing="5">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="毕业生登记表" VerticalAlignment="Center"/>
+                                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                    </Grid>
+                                                    
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="成绩单" VerticalAlignment="Center"/>
+                                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                    </Grid>
+                                                    
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="体检表" VerticalAlignment="Center"/>
+                                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                    </Grid>
+                                                    
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="奖惩材料" VerticalAlignment="Center"/>
+                                                        <FontIcon Grid.Column="1" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <!-- 转递信息 -->
+                                            <StackPanel Spacing="8">
+                                                <TextBlock Text="转递信息" 
+                                                          FontSize="14" 
+                                                          FontWeight="SemiBold" 
+                                                          Foreground="{ThemeResource SystemAccentColor}"/>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <TextBlock Grid.Row="0" Text="接收单位：华为技术有限公司" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="1" Text="转递时间：2024年1月25日" Margin="0,0,0,3"/>
+                                                    <TextBlock Grid.Row="2" Text="快递单号：SF123456789"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <!-- 操作按钮 -->
+                                            <StackPanel Spacing="8" Margin="0,20,0,0">
+                                                <Button Content="下载档案信息" 
+                                                       Style="{StaticResource AccentButtonStyle}"
+                                                       HorizontalAlignment="Stretch"/>
+                                                <Button Content="查看转递详情" 
+                                                       HorizontalAlignment="Stretch"/>
+                                                <Button Content="打印档案清单" 
+                                                       HorizontalAlignment="Stretch"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </PivotItem>
+
+                    <!-- 历史记录标签页 -->
+                    <PivotItem Header="历史记录">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- 历史记录操作区 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
+                                <ComboBox PlaceholderText="查询时间" Width="150">
+                                    <ComboBoxItem Content="今天"/>
+                                    <ComboBoxItem Content="最近7天"/>
+                                    <ComboBoxItem Content="最近30天"/>
+                                    <ComboBoxItem Content="自定义时间"/>
+                                </ComboBox>
+                                <ComboBox PlaceholderText="操作类型" Width="120">
+                                    <ComboBoxItem Content="档案查询"/>
+                                    <ComboBoxItem Content="材料下载"/>
+                                    <ComboBoxItem Content="信息修改"/>
+                                    <ComboBoxItem Content="全部"/>
+                                </ComboBox>
+                                <TextBox PlaceholderText="操作人员" Width="150"/>
+                                <Button Content="查询历史" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="清空记录"/>
+                            </StackPanel>
+
+                            <!-- 历史记录列表 -->
+                            <Border Grid.Row="1" 
+                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                   CornerRadius="8" 
+                                   Padding="0">
+                                <ListView x:Name="HistoryRecordsList">
+                                    <ListView.Header>
+                                        <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
+                                             Padding="15,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="操作时间" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1" Text="操作人员" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="2" Text="操作类型" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="3" Text="目标学生" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="4" Text="操作内容" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="5" Text="备注" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="6" Text="结果" FontWeight="SemiBold"/>
+                                        </Grid>
+                                    </ListView.Header>
+                                    
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Padding="15,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="120"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="2024-01-26 14:30" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="管理员" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="档案查询" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="3" Text="张三(2021001)" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="查看档案详情" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="例行检查" VerticalAlignment="Center"/>
+                                                <Border Grid.Column="6" 
+                                                       Background="#4CAF50" 
+                                                       CornerRadius="8" 
+                                                       Padding="6,2"
+                                                       HorizontalAlignment="Center">
+                                                    <TextBlock Text="成功" 
+                                                              Foreground="White" 
+                                                              FontSize="11"/>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Border>
+                        </Grid>
+                    </PivotItem>
+
+                    <!-- 统计报表标签页 -->
+                    <PivotItem Header="统计报表">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- 统计操作区 -->
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
+                                <ComboBox PlaceholderText="统计类型" Width="150">
+                                    <ComboBoxItem Content="档案完成率"/>
+                                    <ComboBoxItem Content="专业分布"/>
+                                    <ComboBoxItem Content="转递统计"/>
+                                    <ComboBoxItem Content="材料审核"/>
+                                </ComboBox>
+                                <DatePicker Width="150"/>
+                                <DatePicker Width="150"/>
+                                <Button Content="生成报表" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button Content="导出Excel"/>
+                            </StackPanel>
+
+                            <!-- 统计卡片 -->
+                            <Grid Grid.Row="1" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 档案完成率卡片 -->
+                                <Border Grid.Column="0" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="20"
+                                       Margin="0,0,10,0">
+                                    <StackPanel>
+                                        <TextBlock Text="档案完成率" 
+                                                  FontSize="14" 
+                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="85.6%" 
+                                                  FontSize="28" 
+                                                  FontWeight="Bold"
+                                                  Foreground="#4CAF50"
+                                                  Margin="0,8,0,0"/>
+                                        <TextBlock Text="较上月提升 5.2%" 
+                                                  FontSize="12" 
+                                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 待处理事项卡片 -->
+                                <Border Grid.Column="1" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="20"
+                                       Margin="5,0,5,0">
+                                    <StackPanel>
+                                        <TextBlock Text="待处理事项" 
+                                                  FontSize="14" 
+                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="127" 
+                                                  FontSize="28" 
+                                                  FontWeight="Bold"
+                                                  Foreground="#FF9800"
+                                                  Margin="0,8,0,0"/>
+                                        <TextBlock Text="需要及时处理" 
+                                                  FontSize="12" 
+                                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 本月转递卡片 -->
+                                <Border Grid.Column="2" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="20"
+                                       Margin="5,0,5,0">
+                                    <StackPanel>
+                                        <TextBlock Text="本月转递" 
+                                                  FontSize="14" 
+                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="89" 
+                                                  FontSize="28" 
+                                                  FontWeight="Bold"
+                                                  Foreground="#2196F3"
+                                                  Margin="0,8,0,0"/>
+                                        <TextBlock Text="较上月增长 12%" 
+                                                  FontSize="12" 
+                                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 系统活跃度卡片 -->
+                                <Border Grid.Column="3" 
+                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                       CornerRadius="8" 
+                                       Padding="20"
+                                       Margin="10,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="系统活跃度" 
+                                                  FontSize="14" 
+                                                  Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        <TextBlock Text="93.2%" 
+                                                  FontSize="28" 
+                                                  FontWeight="Bold"
+                                                  Foreground="#9C27B0"
+                                                  Margin="0,8,0,0"/>
+                                        <TextBlock Text="用户满意度高" 
+                                                  FontSize="12" 
+                                                  Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- 图表区域 -->
+                            <Border Grid.Row="2" 
+                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                   CornerRadius="8" 
+                                   Padding="20">
+                                <StackPanel>
+                                    <TextBlock Text="专业档案完成情况统计图" 
+                                              FontSize="16" 
+                                              FontWeight="SemiBold"
+                                              Margin="0,0,0,20"/>
+                                    
+                                    <!-- 模拟图表显示 -->
+                                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                           CornerRadius="6"
+                                           Height="300"
+                                           Padding="20">
+                                        <StackPanel HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   Spacing="10">
+                                            <FontIcon Glyph="&#xE9D2;" 
+                                                     FontSize="48"
+                                                     Foreground="{ThemeResource SystemAccentColor}"/>
+                                            <TextBlock Text="统计图表显示区域" 
+                                                      FontSize="16"
+                                                      HorizontalAlignment="Center"/>
+                                            <TextBlock Text="此处将显示各专业档案完成情况的可视化图表" 
+                                                      FontSize="12"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                      HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </PivotItem>
+                </Pivot>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>
