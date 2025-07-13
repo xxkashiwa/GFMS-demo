@@ -46,7 +46,7 @@ namespace GFMS.Pages
         private void LoginButton_Click(object sender, RoutedEventArgs args)
         {
             // 隐藏之前可能显示的错误消息
-            ErrorMessageText.Visibility = Visibility.Collapsed;
+            ErrorMessageBorder.Visibility = Visibility.Collapsed;
 
             // 1. 验证表单
             if (string.IsNullOrWhiteSpace(UsernameTextBox.Text))
@@ -63,7 +63,7 @@ namespace GFMS.Pages
 
             if (RoleComboBox.SelectedItem == null)
             {
-                ShowError("请选择角色");
+                ShowError("请选择登录角色");
                 return;
             }
 
@@ -83,10 +83,14 @@ namespace GFMS.Pages
             if (RememberMeCheckBox.IsChecked == true)
             {
                 UserManager.Instance.SetAuthedState(user);
+                // 保存用户名到本地设置
+                Windows.Storage.ApplicationData.Current.LocalSettings.Values["RememberedUsername"] = UsernameTextBox.Text;
             }
             else
             {
                 UserManager.Instance.ClearAuthedState();
+                // 清除保存的用户名
+                Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("RememberedUsername");
             }
 
             // 4. 登录用户
@@ -96,7 +100,7 @@ namespace GFMS.Pages
         private void ShowError(string message)
         {
             ErrorMessageText.Text = message;
-            ErrorMessageText.Visibility = Visibility.Visible;
+            ErrorMessageBorder.Visibility = Visibility.Visible;
         }
     }
 }

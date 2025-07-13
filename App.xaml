@@ -8,9 +8,35 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!--  Other merged dictionaries here  -->
+                <!--  添加WinUI 3通用样式  -->
+                <ResourceDictionary Source="ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <!--  Other app resources here  -->
+
+            <!--  手动定义所有InfoBar相关资源  -->
+            <!--  错误样式  -->
+            <SolidColorBrush x:Key="InfoBarErrorSeverityForeground" Color="#C42B1C" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="#FDF2F2" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#C42B1C" />
+
+            <!--  警告样式  -->
+            <SolidColorBrush x:Key="InfoBarWarningBackgroundBrush" Color="#FFF9F2" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityForeground" Color="#8A6914" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="#F7630C" />
+
+            <!--  信息样式  -->
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="#F3F9FF" />
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityForeground" Color="#0F4A85" />
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="#0078D4" />
+
+            <!--  成功样式  -->
+            <SolidColorBrush x:Key="InfoBarSuccessBackgroundBrush" Color="#F3FDF0" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityForeground" Color="#0E5814" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="#107C10" />
+
+            <!--  其他可能缺失的资源  -->
+            <SolidColorBrush x:Key="InfoBarCloseSeverityForeground" Color="#605E5C" />
+            <SolidColorBrush x:Key="InfoBarCloseBackgroundBrush" Color="#F8F8F8" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
