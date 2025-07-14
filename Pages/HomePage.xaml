@@ -260,7 +260,8 @@
                                 Grid.Column="0"
                                 Height="80"
                                 Margin="0,0,5,10"
-                                Style="{StaticResource AccentButtonStyle}">
+                                Style="{StaticResource AccentButtonStyle}"
+                                Click="AddStudentButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE8FA;" />
                                     <TextBlock FontSize="12" Text="新增学生" />
@@ -271,7 +272,8 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Height="80"
-                                Margin="5,0,0,10">
+                                Margin="5,0,0,10"
+                                Click="BatchImportButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE8E5;" />
                                     <TextBlock FontSize="12" Text="批量导入" />
@@ -282,7 +284,8 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Height="80"
-                                Margin="0,0,5,10">
+                                Margin="0,0,5,10"
+                                Click="FileManagementButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE8A5;" />
                                     <TextBlock FontSize="12" Text="档案管理" />
@@ -293,7 +296,8 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Height="80"
-                                Margin="5,0,0,10">
+                                Margin="5,0,0,10"
+                                Click="FileTransferButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE72A;" />
                                     <TextBlock FontSize="12" Text="档案转递" />
@@ -304,7 +308,8 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Height="80"
-                                Margin="0,0,5,0">
+                                Margin="0,0,5,0"
+                                Click="SearchServiceButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE721;" />
                                     <TextBlock FontSize="12" Text="查询服务" />
@@ -315,7 +320,8 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Height="80"
-                                Margin="5,0,0,0">
+                                Margin="5,0,0,0"
+                                Click="StatisticsReportButton_Click">
                                 <StackPanel Spacing="8">
                                     <FontIcon FontSize="24" Glyph="&#xE9D2;" />
                                     <TextBlock FontSize="12" Text="统计报表" />
@@ -476,7 +482,7 @@
                                     FontSize="14"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="此处将显示近30天的档案处理趋势图表" />
-                                <Button Content="查看详细报表" Style="{StaticResource AccentButtonStyle}" />
+                                <Button Content="查看详细报表" Style="{StaticResource AccentButtonStyle}" Click="ViewDetailedReportButton_Click" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -529,7 +535,8 @@
                                         HorizontalAlignment="Left"
                                         Content="立即处理"
                                         FontSize="12"
-                                        Style="{StaticResource AccentButtonStyle}" />
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        Click="ProcessMaterialsButton_Click" />
                                 </StackPanel>
                             </Border>
 
@@ -550,7 +557,8 @@
                                         Padding="10,6"
                                         HorizontalAlignment="Left"
                                         Content="查看申请"
-                                        FontSize="12" />
+                                        FontSize="12"
+                                        Click="ViewApplicationsButton_Click" />
                                 </StackPanel>
                             </Border>
 

@@ -8,6 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <local:StatusToColorConverter x:Key="StatusToColorConverter"/>
+        <local:RecordTypeToColorConverter x:Key="RecordTypeToColorConverter"/>
+        <local:DateToStringConverter x:Key="DateToStringConverter"/>
+    </Page.Resources>
+
     <ScrollViewer>
         <Grid Margin="20">
             <Grid.RowDefinitions>
@@ -64,7 +70,7 @@
                                         </MenuFlyout>
                                     </Button.Flyout>
                                 </Button>
-                                <Button>
+                                <Button Click="AddStudentButton_Click" Style="{StaticResource AccentButtonStyle}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <FontIcon Glyph="&#xE8FA;" FontSize="14"/>
@@ -72,7 +78,7 @@
                                         </StackPanel>
                                     </Button.Content>
                                 </Button>
-                                <Button>
+                                <Button Click="ExportDataButton_Click">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <FontIcon Glyph="&#xE72D;" FontSize="14"/>
@@ -119,7 +125,7 @@
                                         </ListView.Header>
                                         
                                         <ListView.ItemTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate x:DataType="local:StudentInfo">
                                                 <Grid Padding="15,10">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="100"/>
@@ -128,16 +134,16 @@
                                                         <ColumnDefinition Width="150"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="2" Text="计算机科学与技术" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="3" Text="计科2101" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="0" Text="{x:Bind StudentId}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" Text="{x:Bind Major}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="3" Text="{x:Bind Class}" VerticalAlignment="Center"/>
                                                     <Border Grid.Column="4" 
-                                                           Background="#4CAF50" 
+                                                           Background="{x:Bind Status, Converter={StaticResource StatusToColorConverter}}" 
                                                            CornerRadius="12" 
                                                            Padding="8,4"
                                                            HorizontalAlignment="Left">
-                                                        <TextBlock Text="已完成" 
+                                                        <TextBlock Text="{x:Bind Status}" 
                                                                   Foreground="White" 
                                                                   FontSize="12"/>
                                                     </Border>
@@ -195,9 +201,9 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">
-                                                <Button Content="保存信息" Style="{StaticResource AccentButtonStyle}"/>
-                                                <Button Content="删除学生"/>
-                                                <Button Content="重置"/>
+                                                <Button Content="保存信息" Style="{StaticResource AccentButtonStyle}" Click="SaveStudentButton_Click"/>
+                                                <Button Content="删除学生" Click="DeleteStudentButton_Click"/>
+                                                <Button Content="重置" Click="ResetStudentButton_Click"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>
@@ -216,14 +222,14 @@
 
                             <!-- 操作按钮区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="批量导入成绩" Style="{StaticResource AccentButtonStyle}"/>
-                                <ComboBox PlaceholderText="选择学期" Width="150">
+                                <Button Content="批量导入成绩" Style="{StaticResource AccentButtonStyle}" Click="ImportGradesButton_Click"/>
+                                <ComboBox PlaceholderText="选择学期" Width="150" SelectionChanged="SemesterComboBox_SelectionChanged">
                                     <ComboBoxItem Content="2023-2024春季"/>
                                     <ComboBoxItem Content="2023-2024秋季"/>
                                     <ComboBoxItem Content="2022-2023春季"/>
                                     <ComboBoxItem Content="2022-2023秋季"/>
                                 </ComboBox>
-                                <ComboBox PlaceholderText="选择专业" Width="200">
+                                <ComboBox PlaceholderText="选择专业" Width="200" SelectionChanged="MajorComboBox_SelectionChanged">
                                     <ComboBoxItem Content="计算机科学与技术"/>
                                     <ComboBoxItem Content="软件工程"/>
                                     <ComboBoxItem Content="网络工程"/>
@@ -261,7 +267,7 @@
                                     </ListView.Header>
                                     
                                     <ListView.ItemTemplate>
-                                        <DataTemplate>
+                                        <DataTemplate x:DataType="local:GradeInfo">
                                             <Grid Padding="10">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="100"/>
@@ -273,14 +279,14 @@
                                                     <ColumnDefinition Width="100"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="高等数学" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="3" Text="4" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="4" Text="85" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="5" Text="3.2" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="6" Text="期末成绩" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="7" Text="" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="0" Text="{x:Bind StudentId}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{x:Bind StudentName}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" Text="{x:Bind CourseName}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="3" Text="{x:Bind Credits}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="4" Text="{x:Bind Score}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="5" Text="{x:Bind GPA}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="6" Text="{x:Bind GradeType}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="7" Text="{x:Bind Remarks}" VerticalAlignment="Center"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
@@ -299,14 +305,14 @@
 
                             <!-- 操作按钮区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="添加记录" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="批量导入"/>
-                                <ComboBox PlaceholderText="记录类型" Width="120">
+                                <Button Content="添加记录" Style="{StaticResource AccentButtonStyle}" Click="AddRecordButton_Click"/>
+                                <Button Content="批量导入" Click="ImportRecordsButton_Click"/>
+                                <ComboBox PlaceholderText="记录类型" Width="120" SelectionChanged="RecordTypeComboBox_SelectionChanged">
                                     <ComboBoxItem Content="奖励"/>
                                     <ComboBoxItem Content="处分"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
-                                <ComboBox PlaceholderText="记录级别" Width="120">
+                                <ComboBox PlaceholderText="记录级别" Width="120" SelectionChanged="RecordLevelComboBox_SelectionChanged">
                                     <ComboBoxItem Content="校级"/>
                                     <ComboBoxItem Content="省级"/>
                                     <ComboBoxItem Content="国家级"/>
@@ -348,7 +354,7 @@
                                         </ListView.Header>
                                         
                                         <ListView.ItemTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate x:DataType="local:RewardPunishmentRecord">
                                                 <Grid Padding="15,10">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="100"/>
@@ -358,20 +364,20 @@
                                                         <ColumnDefinition Width="100"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="0" Text="{x:Bind StudentId}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind StudentName}" VerticalAlignment="Center"/>
                                                     <Border Grid.Column="2" 
-                                                           Background="#4CAF50" 
+                                                           Background="{x:Bind Type, Converter={StaticResource RecordTypeToColorConverter}}" 
                                                            CornerRadius="8" 
                                                            Padding="6,2"
                                                            HorizontalAlignment="Center">
-                                                        <TextBlock Text="奖励" 
+                                                        <TextBlock Text="{x:Bind Type}" 
                                                                   Foreground="White" 
                                                                   FontSize="11"/>
                                                     </Border>
-                                                    <TextBlock Grid.Column="3" Text="三好学生" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="4" Text="校级" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="5" Text="2023-12-01" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="3" Text="{x:Bind Name}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="4" Text="{x:Bind Level}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="5" Text="{x:Bind Date, Converter={StaticResource DateToStringConverter}}" VerticalAlignment="Center"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -419,7 +425,7 @@
                                                 
                                                 <StackPanel>
                                                     <TextBlock Text="证书文件" Margin="0,0,0,5"/>
-                                                    <Button>
+                                                    <Button Click="SelectFileButton_Click">
                                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                                             <FontIcon Glyph="&#xE723;" FontSize="14"/>
                                                             <TextBlock Text="选择文件"/>
@@ -429,9 +435,9 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">
-                                                <Button Content="保存记录" Style="{StaticResource AccentButtonStyle}"/>
-                                                <Button Content="删除"/>
-                                                <Button Content="清空"/>
+                                                <Button Content="保存记录" Style="{StaticResource AccentButtonStyle}" Click="SaveRecordButton_Click"/>
+                                                <Button Content="删除" Click="DeleteRecordButton_Click"/>
+                                                <Button Content="清空" Click="ClearRecordButton_Click"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>

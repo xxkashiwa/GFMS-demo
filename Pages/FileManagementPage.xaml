@@ -59,17 +59,17 @@
                                         <ComboBoxItem Content="奖学金证书"/>
                                         <ComboBoxItem Content="其他材料"/>
                                     </ComboBox>
-                                    <Button Content="批量上传" Style="{StaticResource AccentButtonStyle}"/>
+                                    <Button Content="批量上传" Style="{StaticResource AccentButtonStyle}" Click="BatchUploadButton_Click"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                                    <Button>
+                                    <Button Click="DownloadTemplateButton_Click">
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <FontIcon Glyph="&#xE896;" FontSize="14"/>
                                             <TextBlock Text="下载模板"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button>
+                                    <Button Click="UploadInstructionButton_Click">
                                         <StackPanel Orientation="Horizontal" Spacing="5">
                                             <FontIcon Glyph="&#xE946;" FontSize="14"/>
                                             <TextBlock Text="上传说明"/>
@@ -160,10 +160,12 @@
                                                             <Button Content="预览" 
                                                                    Style="{StaticResource AccentButtonStyle}"
                                                                    FontSize="11"
-                                                                   Padding="8,4"/>
+                                                                   Padding="8,4"
+                                                                   Click="PreviewFileButton_Click"/>
                                                             <Button Content="删除" 
                                                                    FontSize="11"
-                                                                   Padding="8,4"/>
+                                                                   Padding="8,4"
+                                                                   Click="DeleteFileButton_Click"/>
                                                         </StackPanel>
                                                     </Grid>
                                                 </DataTemplate>
@@ -204,7 +206,8 @@
                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                           HorizontalAlignment="Center"/>
                                                 <Button Content="选择文件" 
-                                                       Style="{StaticResource AccentButtonStyle}"/>
+                                                       Style="{StaticResource AccentButtonStyle}"
+                                                       Click="SelectFileButton_Click"/>
                                             </StackPanel>
                                         </Border>
 
@@ -244,11 +247,14 @@
                                             <TextBlock Text="快速操作" FontWeight="SemiBold"/>
                                             <StackPanel Spacing="8">
                                                 <Button Content="批量下载模板" 
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="BatchDownloadTemplateButton_Click"/>
                                                 <Button Content="查看上传历史" 
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="ViewUploadHistoryButton_Click"/>
                                                 <Button Content="导出文件清单" 
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="ExportFileListButton_Click"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -267,19 +273,19 @@
 
                             <!-- 审核操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <ComboBox PlaceholderText="审核状态" Width="120">
+                                <ComboBox PlaceholderText="审核状态" Width="120" SelectionChanged="ReviewStatusComboBox_SelectionChanged">
                                     <ComboBoxItem Content="待审核"/>
                                     <ComboBoxItem Content="已通过"/>
                                     <ComboBoxItem Content="已退回"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
-                                <ComboBox PlaceholderText="专业筛选" Width="150">
+                                <ComboBox PlaceholderText="专业筛选" Width="150" SelectionChanged="ReviewMajorComboBox_SelectionChanged">
                                     <ComboBoxItem Content="计算机科学与技术"/>
                                     <ComboBoxItem Content="软件工程"/>
                                     <ComboBoxItem Content="网络工程"/>
                                 </ComboBox>
-                                <Button Content="批量审核" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="导出报告"/>
+                                <Button Content="批量审核" Style="{StaticResource AccentButtonStyle}" Click="BatchReviewButton_Click"/>
+                                <Button Content="导出报告" Click="ExportReportButton_Click"/>
                             </StackPanel>
 
                             <!-- 审核列表和详情 -->
@@ -345,7 +351,8 @@
                                                            Style="{StaticResource AccentButtonStyle}"
                                                            FontSize="12"
                                                            Padding="10,4"
-                                                           HorizontalAlignment="Left"/>
+                                                           HorizontalAlignment="Left"
+                                                           Click="ReviewFileButton_Click"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -440,7 +447,8 @@
                                                                   HorizontalAlignment="Center"/>
                                                         <Button Content="打开预览" 
                                                                Style="{StaticResource AccentButtonStyle}"
-                                                               FontSize="12"/>
+                                                               FontSize="12"
+                                                               Click="OpenPreviewButton_Click"/>
                                                     </StackPanel>
                                                 </Border>
                                             </StackPanel>
@@ -466,13 +474,16 @@
                                                     <Button Content="通过" 
                                                            Background="#4CAF50"
                                                            Foreground="White"
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="ApproveButton_Click"/>
                                                     <Button Content="退回" 
                                                            Background="#F44336"
                                                            Foreground="White"
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="RejectButton_Click"/>
                                                     <Button Content="暂存" 
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="SaveDraftButton_Click"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
@@ -492,14 +503,14 @@
 
                             <!-- 归档操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="生成电子档案袋" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="批量归档"/>
-                                <ComboBox PlaceholderText="归档状态" Width="120">
+                                <Button Content="生成电子档案袋" Style="{StaticResource AccentButtonStyle}" Click="GenerateArchiveButton_Click"/>
+                                <Button Content="批量归档" Click="BatchArchiveButton_Click"/>
+                                <ComboBox PlaceholderText="归档状态" Width="120" SelectionChanged="ArchiveStatusComboBox_SelectionChanged">
                                     <ComboBoxItem Content="待归档"/>
                                     <ComboBoxItem Content="已归档"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
-                                <Button Content="导出统计"/>
+                                <Button Content="导出统计" Click="ExportStatisticsButton_Click"/>
                             </StackPanel>
 
                             <!-- 归档列表 -->
@@ -569,10 +580,12 @@
                                                         <Button Content="查看档案袋" 
                                                                Style="{StaticResource AccentButtonStyle}"
                                                                FontSize="11"
-                                                               Padding="8,4"/>
+                                                               Padding="8,4"
+                                                               Click="ViewArchiveButton_Click"/>
                                                         <Button Content="下载" 
                                                                FontSize="11"
-                                                               Padding="8,4"/>
+                                                               Padding="8,4"
+                                                               Click="DownloadArchiveButton_Click"/>
                                                     </StackPanel>
                                                 </Grid>
                                             </DataTemplate>
