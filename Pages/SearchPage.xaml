@@ -126,10 +126,12 @@
                                         <StackPanel Grid.Column="3" Margin="10,0,0,0">
                                             <TextBlock Text="操作" Margin="0,0,0,5"/>
                                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                                <Button Content="搜索" 
+                                                <Button x:Name="SearchButton"
+                                                       Content="搜索" 
                                                        Style="{StaticResource AccentButtonStyle}"
                                                        Padding="20,8"/>
-                                                <Button Content="重置" 
+                                                <Button x:Name="ResetButton"
+                                                       Content="重置" 
                                                        Padding="20,8"/>
                                             </StackPanel>
                                         </StackPanel>
@@ -162,9 +164,9 @@
                                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
                                                Padding="15,10">
                                             <StackPanel Orientation="Horizontal" Spacing="20">
-                                                <TextBlock Text="搜索结果：共找到 156 条记录" FontWeight="SemiBold"/>
-                                                <Button Content="导出结果" FontSize="12" Padding="8,4"/>
-                                                <ComboBox SelectedIndex="0" Width="120">
+                                                <TextBlock x:Name="SearchResultsCountText" Text="搜索结果：共找到 156 条记录" FontWeight="SemiBold"/>
+                                                <Button x:Name="ExportResultsButton" Content="导出结果" FontSize="12" Padding="8,4"/>
+                                                <ComboBox x:Name="SortComboBox" SelectedIndex="0" Width="120">
                                                     <ComboBoxItem Content="按学号排序"/>
                                                     <ComboBoxItem Content="按姓名排序"/>
                                                     <ComboBoxItem Content="按专业排序"/>
@@ -204,11 +206,13 @@
                                                                           FontSize="11"/>
                                                             </Border>
                                                             <Button Grid.Column="5" 
+                                                                   x:Name="ViewDetailsButton"
                                                                    Content="查看详情" 
                                                                    Style="{StaticResource AccentButtonStyle}"
                                                                    FontSize="12"
                                                                    Padding="10,4"
-                                                                   HorizontalAlignment="Left"/>
+                                                                   HorizontalAlignment="Left"
+                                                                   Click="ViewDetailsButton_Click"/>
                                                         </Grid>
                                                     </Border>
                                                 </DataTemplate>
@@ -222,12 +226,12 @@
                                             <StackPanel Orientation="Horizontal" 
                                                        HorizontalAlignment="Center"
                                                        Spacing="10">
-                                                <Button Content="首页" FontSize="12" Padding="8,4"/>
-                                                <Button Content="上一页" FontSize="12" Padding="8,4"/>
-                                                <TextBlock Text="第 1 页 / 共 16 页" VerticalAlignment="Center"/>
-                                                <Button Content="下一页" FontSize="12" Padding="8,4"/>
-                                                <Button Content="末页" FontSize="12" Padding="8,4"/>
-                                                <ComboBox SelectedIndex="0" Width="80">
+                                                <Button x:Name="FirstPageButton" Content="首页" FontSize="12" Padding="8,4"/>
+                                                <Button x:Name="PrevPageButton" Content="上一页" FontSize="12" Padding="8,4"/>
+                                                <TextBlock x:Name="PageInfoText" Text="第 1 页 / 共 16 页" VerticalAlignment="Center"/>
+                                                <Button x:Name="NextPageButton" Content="下一页" FontSize="12" Padding="8,4"/>
+                                                <Button x:Name="LastPageButton" Content="末页" FontSize="12" Padding="8,4"/>
+                                                <ComboBox x:Name="PageSizeComboBox" SelectedIndex="0" Width="80">
                                                     <ComboBoxItem Content="10条/页"/>
                                                     <ComboBoxItem Content="20条/页"/>
                                                     <ComboBoxItem Content="50条/页"/>
@@ -379,12 +383,15 @@
 
                                             <!-- 操作按钮 -->
                                             <StackPanel Spacing="8" Margin="0,20,0,0">
-                                                <Button Content="下载档案信息" 
+                                                <Button x:Name="DownloadArchiveButton"
+                                                       Content="下载档案信息" 
                                                        Style="{StaticResource AccentButtonStyle}"
                                                        HorizontalAlignment="Stretch"/>
-                                                <Button Content="查看转递详情" 
+                                                <Button x:Name="ViewTransferButton"
+                                                       Content="查看转递详情" 
                                                        HorizontalAlignment="Stretch"/>
-                                                <Button Content="打印档案清单" 
+                                                <Button x:Name="PrintListButton"
+                                                       Content="打印档案清单" 
                                                        HorizontalAlignment="Stretch"/>
                                             </StackPanel>
                                         </StackPanel>
@@ -404,21 +411,21 @@
 
                             <!-- 历史记录操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <ComboBox PlaceholderText="查询时间" Width="150">
+                                <ComboBox x:Name="HistoryTimeCombo" PlaceholderText="查询时间" Width="150">
                                     <ComboBoxItem Content="今天"/>
                                     <ComboBoxItem Content="最近7天"/>
                                     <ComboBoxItem Content="最近30天"/>
                                     <ComboBoxItem Content="自定义时间"/>
                                 </ComboBox>
-                                <ComboBox PlaceholderText="操作类型" Width="120">
+                                <ComboBox x:Name="HistoryTypeCombo" PlaceholderText="操作类型" Width="120">
                                     <ComboBoxItem Content="档案查询"/>
                                     <ComboBoxItem Content="材料下载"/>
                                     <ComboBoxItem Content="信息修改"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
-                                <TextBox PlaceholderText="操作人员" Width="150"/>
-                                <Button Content="查询历史" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="清空记录"/>
+                                <TextBox x:Name="HistoryOperatorTextBox" PlaceholderText="操作人员" Width="150"/>
+                                <Button x:Name="QueryHistoryButton" Content="查询历史" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button x:Name="ClearHistoryButton" Content="清空记录"/>
                             </StackPanel>
 
                             <!-- 历史记录列表 -->
@@ -495,16 +502,16 @@
 
                             <!-- 统计操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <ComboBox PlaceholderText="统计类型" Width="150">
+                                <ComboBox x:Name="StatisticsTypeCombo" PlaceholderText="统计类型" Width="150">
                                     <ComboBoxItem Content="档案完成率"/>
                                     <ComboBoxItem Content="专业分布"/>
                                     <ComboBoxItem Content="转递统计"/>
                                     <ComboBoxItem Content="材料审核"/>
                                 </ComboBox>
-                                <DatePicker Width="150"/>
-                                <DatePicker Width="150"/>
-                                <Button Content="生成报表" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="导出Excel"/>
+                                <DatePicker x:Name="StartDatePicker" Width="150"/>
+                                <DatePicker x:Name="EndDatePicker" Width="150"/>
+                                <Button x:Name="GenerateReportButton" Content="生成报表" Style="{StaticResource AccentButtonStyle}"/>
+                                <Button x:Name="ExportExcelButton" Content="导出Excel"/>
                             </StackPanel>
 
                             <!-- 统计卡片 -->

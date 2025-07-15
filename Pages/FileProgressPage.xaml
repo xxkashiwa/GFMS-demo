@@ -40,15 +40,15 @@
 
                             <!-- 申请操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="新增申请" Style="{StaticResource AccentButtonStyle}"/>
-                                <ComboBox PlaceholderText="申请状态" Width="120">
+                                <Button Content="新增申请" Style="{StaticResource AccentButtonStyle}" Click="AddApplicationButton_Click"/>
+                                <ComboBox PlaceholderText="申请状态" Width="120" SelectionChanged="ApplicationStatusComboBox_SelectionChanged">
                                     <ComboBoxItem Content="待审核"/>
                                     <ComboBoxItem Content="已通过"/>
                                     <ComboBoxItem Content="已拒绝"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
                                 <DatePicker Width="150"/>
-                                <Button Content="导出申请单"/>
+                                <Button Content="导出申请单" Click="ExportApplicationButton_Click"/>
                             </StackPanel>
 
                             <!-- 申请列表和详情 -->
@@ -114,7 +114,8 @@
                                                            Style="{StaticResource AccentButtonStyle}"
                                                            FontSize="12"
                                                            Padding="10,4"
-                                                           HorizontalAlignment="Left"/>
+                                                           HorizontalAlignment="Left"
+                                                           Click="ProcessApplicationButton_Click"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -202,13 +203,16 @@
                                                     <Button Content="批准" 
                                                            Background="#4CAF50"
                                                            Foreground="White"
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="ApproveApplicationButton_Click"/>
                                                     <Button Content="拒绝" 
                                                            Background="#F44336"
                                                            Foreground="White"
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="RejectApplicationButton_Click"/>
                                                     <Button Content="暂存" 
-                                                           Padding="15,8"/>
+                                                           Padding="15,8"
+                                                           Click="SaveDraftApplicationButton_Click"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
@@ -228,14 +232,14 @@
 
                             <!-- 整理操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="生成调档函" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="打印标签"/>
-                                <ComboBox PlaceholderText="整理状态" Width="120">
+                                <Button Content="生成调档函" Style="{StaticResource AccentButtonStyle}" Click="GenerateTransferLetterButton_Click"/>
+                                <Button Content="打印标签" Click="PrintLabelButton_Click"/>
+                                <ComboBox PlaceholderText="整理状态" Width="120" SelectionChanged="OrganizeStatusComboBox_SelectionChanged">
                                     <ComboBoxItem Content="待整理"/>
                                     <ComboBoxItem Content="整理中"/>
                                     <ComboBoxItem Content="已完成"/>
                                 </ComboBox>
-                                <Button Content="批量操作"/>
+                                <Button Content="批量操作" Click="BatchOperationButton_Click"/>
                             </StackPanel>
 
                             <!-- 整理任务列表 -->
@@ -362,9 +366,12 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0"/>
+                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
+                                                                 x:Name="GraduateFormCheckBox" 
+                                                                 Checked="MaterialCheckBox_Checked" 
+                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
                                                         <TextBlock Grid.Column="1" Text="毕业生登记表" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <FontIcon Grid.Column="2" x:Name="GraduateFormIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
                                                     </Grid>
                                                     
                                                     <Grid>
@@ -373,9 +380,12 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0"/>
+                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
+                                                                 x:Name="TranscriptCheckBox" 
+                                                                 Checked="MaterialCheckBox_Checked" 
+                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
                                                         <TextBlock Grid.Column="1" Text="成绩单" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <FontIcon Grid.Column="2" x:Name="TranscriptIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
                                                     </Grid>
                                                     
                                                     <Grid>
@@ -384,9 +394,12 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="False" Margin="0,0,10,0"/>
+                                                        <CheckBox Grid.Column="0" IsChecked="False" Margin="0,0,10,0" 
+                                                                 x:Name="MedicalCheckBox" 
+                                                                 Checked="MaterialCheckBox_Checked" 
+                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
                                                         <TextBlock Grid.Column="1" Text="体检表" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" Glyph="&#xE711;" Foreground="#FF9800"/>
+                                                        <FontIcon Grid.Column="2" x:Name="MedicalIcon" Glyph="&#xE711;" Foreground="#FF9800"/>
                                                     </Grid>
                                                     
                                                     <Grid>
@@ -395,9 +408,12 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0"/>
+                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
+                                                                 x:Name="RewardPunishmentCheckBox" 
+                                                                 Checked="MaterialCheckBox_Checked" 
+                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
                                                         <TextBlock Grid.Column="1" Text="奖惩材料" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <FontIcon Grid.Column="2" x:Name="RewardPunishmentIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
                                                     </Grid>
                                                 </StackPanel>
                                             </StackPanel>
@@ -408,8 +424,9 @@
                                                           FontSize="14" 
                                                           FontWeight="SemiBold" 
                                                           Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <ProgressBar Value="75" Maximum="100" Height="12"/>
-                                                <TextBlock Text="75% 完成 (6/8 项)" 
+                                                <ProgressBar x:Name="OrganizeProgressBar" Value="75" Maximum="100" Height="12"/>
+                                                <TextBlock x:Name="OrganizeProgressText" 
+                                                          Text="75% 完成 (3/4 项)" 
                                                           FontSize="12"
                                                           HorizontalAlignment="Center"/>
                                             </StackPanel>
@@ -418,11 +435,14 @@
                                             <StackPanel Spacing="10" Margin="0,20,0,0">
                                                 <Button Content="生成调档函" 
                                                        Style="{StaticResource AccentButtonStyle}"
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="GenerateTransferLetterDetailButton_Click"/>
                                                 <Button Content="打印档案袋标签" 
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="PrintArchiveLabelButton_Click"/>
                                                 <Button Content="标记完成" 
-                                                       HorizontalAlignment="Stretch"/>
+                                                       HorizontalAlignment="Stretch"
+                                                       Click="MarkCompleteButton_Click"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>
@@ -441,15 +461,15 @@
 
                             <!-- 记录操作区 -->
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="记录寄出" Style="{StaticResource AccentButtonStyle}"/>
-                                <Button Content="批量录入快递单号"/>
-                                <ComboBox PlaceholderText="转递状态" Width="120">
+                                <Button Content="记录寄出" Style="{StaticResource AccentButtonStyle}" Click="RecordShipmentButton_Click"/>
+                                <Button Content="批量录入快递单号" Click="BatchInputTrackingButton_Click"/>
+                                <ComboBox PlaceholderText="转递状态" Width="120" SelectionChanged="TransferStatusComboBox_SelectionChanged">
                                     <ComboBoxItem Content="已寄出"/>
                                     <ComboBoxItem Content="运输中"/>
                                     <ComboBoxItem Content="已签收"/>
                                     <ComboBoxItem Content="全部"/>
                                 </ComboBox>
-                                <Button Content="导出转递清单"/>
+                                <Button Content="导出转递清单" Click="ExportTransferListButton_Click"/>
                             </StackPanel>
 
                             <!-- 转递记录列表 -->
@@ -516,10 +536,12 @@
                                                     <Button Content="跟踪" 
                                                            Style="{StaticResource AccentButtonStyle}"
                                                            FontSize="11"
-                                                           Padding="8,4"/>
+                                                           Padding="8,4"
+                                                           Click="TrackPackageButton_Click"/>
                                                     <Button Content="详情" 
                                                            FontSize="11"
-                                                           Padding="8,4"/>
+                                                           Padding="8,4"
+                                                           Click="ViewDetailsButton_Click"/>
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>
