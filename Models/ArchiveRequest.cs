@@ -6,6 +6,7 @@ namespace GFMS.Models
 {
     public class ArchiveRequest
     {
+        [Key]
         public int Id { get; set; }
         
         [Required]
@@ -19,6 +20,7 @@ namespace GFMS.Models
         
         public DateTime RequestDate { get; set; } = DateTime.Now;
         
+        [Required]
         public string Status { get; set; } = "待审核"; // 待审核, 已通过, 已寄出, 已签收
         
         public string? TrackingNumber { get; set; }

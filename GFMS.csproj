@@ -20,6 +20,11 @@
     <None Remove="Pages\HomePage.xaml" />
     <None Remove="Pages\SearchPage.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Dialogs\ArchiveRequestDialog.xaml" />
+    <Page Remove="Dialogs\TransferLetterDialog.xaml" />
+    <Page Remove="Dialogs\TransferStatusDialog.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -49,6 +54,17 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
     <PackageReference Include="System.Text.Json" Version="9.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Dialogs\ArchiveRequestDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dialogs\TransferLetterDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dialogs\TransferStatusDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\AuthPage.xaml">

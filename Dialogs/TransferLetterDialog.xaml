@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="GFMS.Dialogs.TransferLetterDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="���ɵ�����"
+    PrimaryButtonText="���ɵ�����"
+    CloseButtonText="ȡ��"
+    DefaultButton="Primary"
+    Width="700">
+
+    <ScrollViewer>
+        <StackPanel Spacing="15" Margin="20">
+
+            <!-- ������������Ϣ -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="������������Ϣ" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" 
+                            x:Name="LetterNumberTextBox"
+                            Header="���������" 
+                            IsReadOnly="True"/>
+                    <DatePicker Grid.Column="2" 
+                               x:Name="TransferDatePicker"
+                               Header="����ʱ��*"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- ѧ��������Ϣ -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="ѧ��������Ϣ" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0" Grid.Column="0" 
+                            x:Name="StudentIdTextBox"
+                            Header="ѧ��" 
+                            IsReadOnly="True"/>
+                    <TextBox Grid.Row="0" Grid.Column="2" 
+                            x:Name="StudentNameTextBox"
+                            Header="����" 
+                            IsReadOnly="True"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" 
+                            x:Name="MajorTextBox"
+                            Header="רҵ" 
+                            IsReadOnly="True"/>
+                    <TextBox Grid.Row="1" Grid.Column="2" 
+                            x:Name="GraduationYearTextBox"
+                            Header="��ҵ���" 
+                            IsReadOnly="True"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- ���յ�λ��Ϣ -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="���յ�λ��Ϣ" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <TextBox x:Name="ReceiverNameTextBox"
+                        Header="��λ����" 
+                        IsReadOnly="True"/>
+
+                <TextBox x:Name="ReceiverAddressTextBox"
+                        Header="��λ��ַ" 
+                        IsReadOnly="True"
+                        AcceptsReturn="True"
+                        Height="60"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" 
+                            x:Name="ReceiverContactTextBox"
+                            Header="��ϵ��" 
+                            IsReadOnly="True"/>
+                    <TextBox Grid.Column="2" 
+                            x:Name="ReceiverPhoneTextBox"
+                            Header="��ϵ�绰" 
+                            IsReadOnly="True"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- ���������嵥 -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="���������嵥" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                       CornerRadius="8"
+                       Padding="15">
+                    <StackPanel Spacing="10">
+                        <CheckBox x:Name="GraduateFormCheckBox" 
+                                 Content="��ҵ���ǼǱ�" 
+                                 IsChecked="True"/>
+                        <CheckBox x:Name="TranscriptCheckBox" 
+                                 Content="ѧϰ�ɼ���" 
+                                 IsChecked="True"/>
+                        <CheckBox x:Name="MedicalCheckBox" 
+                                 Content="����" 
+                                 IsChecked="False"/>
+                        <CheckBox x:Name="RewardPunishmentCheckBox" 
+                                 Content="���Ͳ���" 
+                                 IsChecked="True"/>
+                        <CheckBox x:Name="ThesisDefenseCheckBox" 
+                                 Content="���Ĵ���¼" 
+                                 IsChecked="True"/>
+                        <CheckBox x:Name="InternshipReportCheckBox" 
+                                 Content="ʵϰ����" 
+                                 IsChecked="False"/>
+
+                        <TextBox x:Name="OtherMaterialsTextBox"
+                                Header="��������"
+                                PlaceholderText="���г�������Ҫת�ݵĲ���"
+                                AcceptsReturn="True"
+                                Height="60"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- ��ע��Ϣ -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="��ע��Ϣ" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <TextBox x:Name="RemarksTextBox"
+                        Header="��ע" 
+                        PlaceholderText="����д��ر�ע��Ϣ"
+                        AcceptsReturn="True"
+                        Height="80"/>
+            </StackPanel>
+
+            <!-- ������Ԥ�� -->
+            <StackPanel Spacing="8">
+                <TextBlock Text="������Ԥ��" 
+                          FontSize="16" 
+                          FontWeight="SemiBold" 
+                          Foreground="{ThemeResource SystemAccentColor}"/>
+
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                       Padding="20">
+                    <ScrollViewer Height="200">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="������" 
+                                      FontSize="18" 
+                                      FontWeight="Bold" 
+                                      HorizontalAlignment="Center"/>
+
+                            <TextBlock x:Name="PreviewContent"
+                                      TextWrapping="Wrap"
+                                      FontSize="12"
+                                      LineHeight="20"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
+
+            <!-- ������ʾ -->
+            <Border Background="{ThemeResource SystemFillColorSolidNeutralBackgroundBrush}"
+                   CornerRadius="8"
+                   Padding="15">
+                <StackPanel Spacing="5">
+                    <TextBlock Text="?? ������ʾ" 
+                              FontWeight="SemiBold"/>
+                    <TextBlock Text="1. ��˶�ѧ����Ϣ�ͽ��յ�λ��Ϣ�Ƿ���ȷ"
+                              FontSize="12"
+                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock Text="2. ѡ����Ҫת�ݵĵ�������"
+                              FontSize="12"
+                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock Text="3. ���ɺ���Դ�ӡ������"
+                              FontSize="12"
+                              Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

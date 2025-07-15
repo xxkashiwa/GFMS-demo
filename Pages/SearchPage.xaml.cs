@@ -14,6 +14,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using GFMS.Models;
+using GFMS.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -476,13 +478,49 @@ namespace GFMS.Pages
         {
             try
             {
-                // TODO: 打开转递详情对话框
-                await ShowTransferDetailsDialogAsync();
+                // 获取当前选中的学生
+                var selectedStudent = GetSelectedStudent();
+                if (selectedStudent == null)
+                {
+                    ShowNotification("查看失败", "请先选择一个学生", true);
+                    return;
+                }
+
+                // 获取该学生的转递记录
+                var transferService = ArchiveTransferService.Instance;
+                var requests = transferService.GetArchiveRequests(selectedStudent.StudentId);
+                
+                if (requests == null || requests.Count == 0)
+                {
+                    await ShowInfoDialog("暂无记录", "该学生暂无档案转递记录");
+                    return;
+                }
+
+                // 如果有多个申请，显示最新的一个
+                var latestRequest = requests.OrderByDescending(r => r.RequestDate).FirstOrDefault();
+                if (latestRequest != null)
+                {
+                    var dialog = new GFMS.Dialogs.TransferStatusDialog(latestRequest);
+                    dialog.XamlRoot = this.XamlRoot;
+                    await dialog.ShowAsync();
+                }
             }
             catch (Exception ex)
             {
                 ShowNotification("查看失败", ex.Message, true);
             }
+        }
+
+        /// <summary>
+        /// 获取当前选中的学生（这是一个示例方法，需要根据实际UI实现）
+        /// </summary>
+        private Student GetSelectedStudent()
+        {
+            // 这里应该从搜索结果列表或其他UI控件获取选中的学生
+            // 现在返回一个示例学生用于演示
+            var transferService = ArchiveTransferService.Instance;
+            var students = transferService.GetStudents();
+            return students.FirstOrDefault();
         }
         
         /// <summary>

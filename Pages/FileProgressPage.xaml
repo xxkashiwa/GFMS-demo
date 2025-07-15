@@ -1,218 +1,289 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="GFMS.Pages.FileProgressPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:GFMS.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GFMS.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:GFMS.Models"
     mc:Ignorable="d">
 
     <ScrollViewer>
         <Grid Margin="20">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- 页面标题 -->
+            <!--  页面标题  -->
             <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                <TextBlock Text="档案转递流程" 
-                          FontSize="32" 
-                          FontWeight="Bold"
-                          Margin="0,0,0,10"/>
-                <TextBlock Text="处理调档申请、档案整理和转递记录" 
-                          FontSize="14" 
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Text="档案转递流程" />
+                <TextBlock
+                    FontSize="14"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="处理调档申请、档案整理和转递记录" />
             </StackPanel>
 
-            <!-- 主要内容区域 -->
+            <!--  主要内容区域  -->
             <Grid Grid.Row="1">
                 <Pivot x:Name="FileProgressPivot">
-                    
-                    <!-- 调档申请标签页 -->
+
+                    <!--  调档申请标签页  -->
                     <PivotItem Header="调档申请">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <!-- 申请操作区 -->
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="新增申请" Style="{StaticResource AccentButtonStyle}" Click="AddApplicationButton_Click"/>
-                                <ComboBox PlaceholderText="申请状态" Width="120" SelectionChanged="ApplicationStatusComboBox_SelectionChanged">
-                                    <ComboBoxItem Content="待审核"/>
-                                    <ComboBoxItem Content="已通过"/>
-                                    <ComboBoxItem Content="已拒绝"/>
-                                    <ComboBoxItem Content="全部"/>
+                            <!--  申请操作区  -->
+                            <StackPanel
+                                Grid.Row="0"
+                                Margin="0,0,0,20"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <Button
+                                    Click="AddApplicationButton_Click"
+                                    Content="新增申请"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                                <ComboBox
+                                    Width="120"
+                                    PlaceholderText="申请状态"
+                                    SelectionChanged="ApplicationStatusComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="待审核" />
+                                    <ComboBoxItem Content="已通过" />
+                                    <ComboBoxItem Content="已拒绝" />
+                                    <ComboBoxItem Content="全部" />
                                 </ComboBox>
-                                <DatePicker Width="150"/>
-                                <Button Content="导出申请单" Click="ExportApplicationButton_Click"/>
+                                <DatePicker Width="150" />
+                                <Button Click="ExportApplicationButton_Click" Content="导出申请单" />
                             </StackPanel>
 
-                            <!-- 申请列表和详情 -->
+                            <!--  申请列表和详情  -->
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="400"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="400" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- 左侧申请列表 -->
-                                <Border Grid.Column="0" 
-                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                                       CornerRadius="8" 
-                                       Padding="0"
-                                       Margin="0,0,10,0">
-                                    <ListView x:Name="ApplicationList">
+                                <!--  左侧申请列表  -->
+                                <Border
+                                    Grid.Column="0"
+                                    Margin="0,0,10,0"
+                                    Padding="0"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8">
+                                    <ListView x:Name="ApplicationList" SelectionChanged="ApplicationList_SelectionChanged">
                                         <ListView.Header>
-                                            <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
-                                                 Padding="15,10">
+                                            <Grid Padding="15,10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="200"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="200" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="学号" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="1" Text="姓名" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="2" Text="接收单位" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="3" Text="申请时间" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="4" Text="状态" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="5" Text="操作" FontWeight="SemiBold"/>
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    FontWeight="SemiBold"
+                                                    Text="学号" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    FontWeight="SemiBold"
+                                                    Text="姓名" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    FontWeight="SemiBold"
+                                                    Text="接收单位" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    FontWeight="SemiBold"
+                                                    Text="申请时间" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    FontWeight="SemiBold"
+                                                    Text="状态" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    FontWeight="SemiBold"
+                                                    Text="操作" />
                                             </Grid>
                                         </ListView.Header>
-                                        
+
                                         <ListView.ItemTemplate>
-                                            <DataTemplate>
+                                            <DataTemplate x:DataType="models:ArchiveRequest">
                                                 <Grid Padding="15,10">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="100"/>
-                                                        <ColumnDefinition Width="120"/>
-                                                        <ColumnDefinition Width="200"/>
-                                                        <ColumnDefinition Width="120"/>
-                                                        <ColumnDefinition Width="100"/>
-                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="120" />
+                                                        <ColumnDefinition Width="200" />
+                                                        <ColumnDefinition Width="120" />
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="2" Text="华为技术有限公司" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="3" Text="2024-01-15" VerticalAlignment="Center"/>
-                                                    <Border Grid.Column="4" 
-                                                           Background="#FF9800" 
-                                                           CornerRadius="8" 
-                                                           Padding="6,2"
-                                                           HorizontalAlignment="Center">
-                                                        <TextBlock Text="待审核" 
-                                                                  Foreground="White" 
-                                                                  FontSize="11"/>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind Student.StudentId}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind Student.Name}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind ReceiverName}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind RequestDate, Converter={StaticResource DateTimeToStringConverter}}" />
+                                                    <Border
+                                                        Grid.Column="4"
+                                                        Padding="6,2"
+                                                        HorizontalAlignment="Center"
+                                                        Background="#FF9800"
+                                                        CornerRadius="8">
+                                                        <TextBlock
+                                                            FontSize="11"
+                                                            Foreground="White"
+                                                            Text="{x:Bind Status}" />
                                                     </Border>
-                                                    <Button Grid.Column="5" 
-                                                           Content="处理" 
-                                                           Style="{StaticResource AccentButtonStyle}"
-                                                           FontSize="12"
-                                                           Padding="10,4"
-                                                           HorizontalAlignment="Left"
-                                                           Click="ProcessApplicationButton_Click"/>
+                                                    <Button
+                                                        Grid.Column="5"
+                                                        Padding="10,4"
+                                                        HorizontalAlignment="Left"
+                                                        Click="ProcessApplicationButton_Click"
+                                                        Content="处理"
+                                                        FontSize="12"
+                                                        Style="{StaticResource AccentButtonStyle}" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
                                 </Border>
 
-                                <!-- 右侧申请详情面板 -->
-                                <Border Grid.Column="1" 
-                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                                       CornerRadius="8" 
-                                       Padding="20"
-                                       Margin="10,0,0,0">
+                                <!--  右侧申请详情面板  -->
+                                <Border
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Padding="20"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8">
                                     <ScrollViewer>
                                         <StackPanel Spacing="15">
-                                            <TextBlock Text="调档申请详情" 
-                                                      FontSize="18" 
-                                                      FontWeight="SemiBold"/>
-                                            
-                                            <!-- 申请人信息 -->
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="SemiBold"
+                                                Text="调档申请详情" />
+
+                                            <!--  申请人信息  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="申请人信息" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <TextBox Header="学号" Text="2021001" IsReadOnly="True"/>
-                                                <TextBox Header="姓名" Text="张三" IsReadOnly="True"/>
-                                                <TextBox Header="专业" Text="计算机科学与技术" IsReadOnly="True"/>
-                                                <TextBox Header="联系电话" Text="13800138000"/>
-                                                <TextBox Header="邮箱地址" Text="zhangsan@email.com"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="申请人信息" />
+                                                <TextBox
+                                                    Header="学号"
+                                                    IsReadOnly="True"
+                                                    Text="2021001" />
+                                                <TextBox
+                                                    Header="姓名"
+                                                    IsReadOnly="True"
+                                                    Text="张三" />
+                                                <TextBox
+                                                    Header="专业"
+                                                    IsReadOnly="True"
+                                                    Text="计算机科学与技术" />
+                                                <TextBox Header="联系电话" Text="13800138000" />
+                                                <TextBox Header="邮箱地址" Text="zhangsan@email.com" />
                                             </StackPanel>
 
-                                            <!-- 接收单位信息 -->
+                                            <!--  接收单位信息  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="接收单位信息" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <TextBox Header="单位名称" Text="华为技术有限公司"/>
-                                                <TextBox Header="单位地址" Text="深圳市龙岗区坂田华为基地"/>
-                                                <TextBox Header="联系人" Text="李经理"/>
-                                                <TextBox Header="联系电话" Text="0755-12345678"/>
-                                                <TextBox Header="邮政编码" Text="518129"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="接收单位信息" />
+                                                <TextBox Header="单位名称" Text="华为技术有限公司" />
+                                                <TextBox Header="单位地址" Text="深圳市龙岗区坂田华为基地" />
+                                                <TextBox Header="联系人" Text="李经理" />
+                                                <TextBox Header="联系电话" Text="0755-12345678" />
+                                                <TextBox Header="邮政编码" Text="518129" />
                                             </StackPanel>
 
-                                            <!-- 申请说明 -->
+                                            <!--  申请说明  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="申请说明" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <TextBox Header="申请原因" 
-                                                        Text="入职需要"
-                                                        AcceptsReturn="True"
-                                                        Height="60"/>
-                                                <DatePicker Header="需要时间"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="申请说明" />
+                                                <TextBox
+                                                    Height="60"
+                                                    AcceptsReturn="True"
+                                                    Header="申请原因"
+                                                    Text="入职需要" />
+                                                <DatePicker Header="需要时间" />
                                             </StackPanel>
 
-                                            <!-- 附件材料 -->
+                                            <!--  附件材料  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="附件材料" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                                                       CornerRadius="6"
-                                                       Padding="10">
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="附件材料" />
+                                                <Border
+                                                    Padding="10"
+                                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                    CornerRadius="6">
                                                     <StackPanel Spacing="5">
-                                                        <TextBlock Text="• 接收函.pdf" FontSize="12"/>
-                                                        <TextBlock Text="• 身份证复印件.jpg" FontSize="12"/>
+                                                        <TextBlock FontSize="12" Text="• 接收函.pdf" />
+                                                        <TextBlock FontSize="12" Text="• 身份证复印件.jpg" />
                                                     </StackPanel>
                                                 </Border>
                                             </StackPanel>
 
-                                            <!-- 审核操作 -->
+                                            <!--  审核操作  -->
                                             <StackPanel Spacing="10">
-                                                <TextBlock Text="审核意见" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <TextBox PlaceholderText="请输入审核意见..." 
-                                                        AcceptsReturn="True"
-                                                        Height="60"/>
-                                                
-                                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0">
-                                                    <Button Content="批准" 
-                                                           Background="#4CAF50"
-                                                           Foreground="White"
-                                                           Padding="15,8"
-                                                           Click="ApproveApplicationButton_Click"/>
-                                                    <Button Content="拒绝" 
-                                                           Background="#F44336"
-                                                           Foreground="White"
-                                                           Padding="15,8"
-                                                           Click="RejectApplicationButton_Click"/>
-                                                    <Button Content="暂存" 
-                                                           Padding="15,8"
-                                                           Click="SaveDraftApplicationButton_Click"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="审核意见" />
+                                                <TextBox
+                                                    Height="60"
+                                                    AcceptsReturn="True"
+                                                    PlaceholderText="请输入审核意见..." />
+
+                                                <StackPanel
+                                                    Margin="0,10,0,0"
+                                                    Orientation="Horizontal"
+                                                    Spacing="10">
+                                                    <Button
+                                                        Padding="15,8"
+                                                        Background="#4CAF50"
+                                                        Click="ApproveApplicationButton_Click"
+                                                        Content="批准"
+                                                        Foreground="White" />
+                                                    <Button
+                                                        Padding="15,8"
+                                                        Background="#F44336"
+                                                        Click="RejectApplicationButton_Click"
+                                                        Content="拒绝"
+                                                        Foreground="White" />
+                                                    <Button
+                                                        Padding="15,8"
+                                                        Click="SaveDraftApplicationButton_Click"
+                                                        Content="暂存" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </StackPanel>
@@ -222,227 +293,354 @@
                         </Grid>
                     </PivotItem>
 
-                    <!-- 档案整理标签页 -->
+                    <!--  档案整理标签页  -->
                     <PivotItem Header="档案整理">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <!-- 整理操作区 -->
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="生成调档函" Style="{StaticResource AccentButtonStyle}" Click="GenerateTransferLetterButton_Click"/>
-                                <Button Content="打印标签" Click="PrintLabelButton_Click"/>
-                                <ComboBox PlaceholderText="整理状态" Width="120" SelectionChanged="OrganizeStatusComboBox_SelectionChanged">
-                                    <ComboBoxItem Content="待整理"/>
-                                    <ComboBoxItem Content="整理中"/>
-                                    <ComboBoxItem Content="已完成"/>
+                            <!--  整理操作区  -->
+                            <StackPanel
+                                Grid.Row="0"
+                                Margin="0,0,0,20"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <Button
+                                    Click="GenerateTransferLetterButton_Click"
+                                    Content="生成调档函"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                                <Button Click="PrintLabelButton_Click" Content="打印标签" />
+                                <ComboBox
+                                    Width="120"
+                                    PlaceholderText="整理状态"
+                                    SelectionChanged="OrganizeStatusComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="待整理" />
+                                    <ComboBoxItem Content="整理中" />
+                                    <ComboBoxItem Content="已完成" />
                                 </ComboBox>
-                                <Button Content="批量操作" Click="BatchOperationButton_Click"/>
+                                <Button Click="BatchOperationButton_Click" Content="批量操作" />
                             </StackPanel>
 
-                            <!-- 整理任务列表 -->
+                            <!--  整理任务列表  -->
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="350"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="350" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- 左侧任务列表 -->
-                                <Border Grid.Column="0" 
-                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                                       CornerRadius="8" 
-                                       Padding="0"
-                                       Margin="0,0,10,0">
+                                <!--  左侧任务列表  -->
+                                <Border
+                                    Grid.Column="0"
+                                    Margin="0,0,10,0"
+                                    Padding="0"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8">
                                     <ListView x:Name="OrganizeTaskList">
                                         <ListView.Header>
-                                            <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
-                                                 Padding="15,10">
+                                            <Grid Padding="15,10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="200"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="200" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="学号" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="1" Text="姓名" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="2" Text="接收单位" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="3" Text="截止时间" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="4" Text="状态" FontWeight="SemiBold"/>
-                                                <TextBlock Grid.Column="5" Text="进度" FontWeight="SemiBold"/>
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    FontWeight="SemiBold"
+                                                    Text="学号" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    FontWeight="SemiBold"
+                                                    Text="姓名" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    FontWeight="SemiBold"
+                                                    Text="接收单位" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    FontWeight="SemiBold"
+                                                    Text="截止时间" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    FontWeight="SemiBold"
+                                                    Text="状态" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    FontWeight="SemiBold"
+                                                    Text="进度" />
                                             </Grid>
                                         </ListView.Header>
-                                        
+
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid Padding="15,10">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="100"/>
-                                                        <ColumnDefinition Width="120"/>
-                                                        <ColumnDefinition Width="200"/>
-                                                        <ColumnDefinition Width="120"/>
-                                                        <ColumnDefinition Width="100"/>
-                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="120" />
+                                                        <ColumnDefinition Width="200" />
+                                                        <ColumnDefinition Width="120" />
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="2" Text="华为技术有限公司" VerticalAlignment="Center"/>
-                                                    <TextBlock Grid.Column="3" Text="2024-02-01" VerticalAlignment="Center"/>
-                                                    <Border Grid.Column="4" 
-                                                           Background="#2196F3" 
-                                                           CornerRadius="8" 
-                                                           Padding="6,2"
-                                                           HorizontalAlignment="Center">
-                                                        <TextBlock Text="整理中" 
-                                                                  Foreground="White" 
-                                                                  FontSize="11"/>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        VerticalAlignment="Center"
+                                                        Text="2021001" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        VerticalAlignment="Center"
+                                                        Text="张三" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        VerticalAlignment="Center"
+                                                        Text="华为技术有限公司" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        VerticalAlignment="Center"
+                                                        Text="2024-02-01" />
+                                                    <Border
+                                                        Grid.Column="4"
+                                                        Padding="6,2"
+                                                        HorizontalAlignment="Center"
+                                                        Background="#2196F3"
+                                                        CornerRadius="8">
+                                                        <TextBlock
+                                                            FontSize="11"
+                                                            Foreground="White"
+                                                            Text="整理中" />
                                                     </Border>
-                                                    <ProgressBar Grid.Column="5" 
-                                                                Value="75" 
-                                                                Maximum="100"
-                                                                Height="8"
-                                                                Margin="10,0"/>
+                                                    <ProgressBar
+                                                        Grid.Column="5"
+                                                        Height="8"
+                                                        Margin="10,0"
+                                                        Maximum="100"
+                                                        Value="75" />
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
                                 </Border>
 
-                                <!-- 右侧整理详情面板 -->
-                                <Border Grid.Column="1" 
-                                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                                       CornerRadius="8" 
-                                       Padding="20"
-                                       Margin="10,0,0,0">
+                                <!--  右侧整理详情面板  -->
+                                <Border
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Padding="20"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    CornerRadius="8">
                                     <ScrollViewer>
                                         <StackPanel Spacing="15">
-                                            <TextBlock Text="档案整理进度" 
-                                                      FontSize="18" 
-                                                      FontWeight="SemiBold"/>
-                                            
-                                            <!-- 基本信息 -->
+                                            <TextBlock
+                                                FontSize="18"
+                                                FontWeight="SemiBold"
+                                                Text="档案整理进度" />
+
+                                            <!--  基本信息  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="基本信息" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="基本信息" />
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
                                                     <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
                                                     </Grid.RowDefinitions>
-                                                    
-                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="学号：" Margin="0,0,10,5"/>
-                                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="2021001" Margin="0,0,0,5"/>
-                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="姓名：" Margin="0,0,10,5"/>
-                                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="张三" Margin="0,0,0,5"/>
-                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="接收单位：" Margin="0,0,10,5"/>
-                                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="华为技术有限公司" Margin="0,0,0,5"/>
-                                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="调档函号：" Margin="0,0,10,0"/>
-                                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="DF2024001"/>
+
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Grid.Column="0"
+                                                        Margin="0,0,10,5"
+                                                        Text="学号：" />
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Grid.Column="1"
+                                                        Margin="0,0,0,5"
+                                                        Text="2021001" />
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Grid.Column="0"
+                                                        Margin="0,0,10,5"
+                                                        Text="姓名：" />
+                                                    <TextBlock
+                                                        Grid.Row="1"
+                                                        Grid.Column="1"
+                                                        Margin="0,0,0,5"
+                                                        Text="张三" />
+                                                    <TextBlock
+                                                        Grid.Row="2"
+                                                        Grid.Column="0"
+                                                        Margin="0,0,10,5"
+                                                        Text="接收单位：" />
+                                                    <TextBlock
+                                                        Grid.Row="2"
+                                                        Grid.Column="1"
+                                                        Margin="0,0,0,5"
+                                                        Text="华为技术有限公司" />
+                                                    <TextBlock
+                                                        Grid.Row="3"
+                                                        Grid.Column="0"
+                                                        Margin="0,0,10,0"
+                                                        Text="调档函号：" />
+                                                    <TextBlock
+                                                        Grid.Row="3"
+                                                        Grid.Column="1"
+                                                        Text="DF2024001" />
                                                 </Grid>
                                             </StackPanel>
 
-                                            <!-- 整理清单 -->
+                                            <!--  整理清单  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="材料清单" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="材料清单" />
+
                                                 <StackPanel Spacing="5">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
-                                                                 x:Name="GraduateFormCheckBox" 
-                                                                 Checked="MaterialCheckBox_Checked" 
-                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
-                                                        <TextBlock Grid.Column="1" Text="毕业生登记表" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" x:Name="GraduateFormIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <CheckBox
+                                                            x:Name="GraduateFormCheckBox"
+                                                            Grid.Column="0"
+                                                            Margin="0,0,10,0"
+                                                            Checked="MaterialCheckBox_Checked"
+                                                            IsChecked="True"
+                                                            Unchecked="MaterialCheckBox_Unchecked" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Text="毕业生登记表" />
+                                                        <FontIcon
+                                                            x:Name="GraduateFormIcon"
+                                                            Grid.Column="2"
+                                                            Foreground="#4CAF50"
+                                                            Glyph="&#xE73E;" />
                                                     </Grid>
-                                                    
+
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
-                                                                 x:Name="TranscriptCheckBox" 
-                                                                 Checked="MaterialCheckBox_Checked" 
-                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
-                                                        <TextBlock Grid.Column="1" Text="成绩单" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" x:Name="TranscriptIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <CheckBox
+                                                            x:Name="TranscriptCheckBox"
+                                                            Grid.Column="0"
+                                                            Margin="0,0,10,0"
+                                                            Checked="MaterialCheckBox_Checked"
+                                                            IsChecked="True"
+                                                            Unchecked="MaterialCheckBox_Unchecked" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Text="成绩单" />
+                                                        <FontIcon
+                                                            x:Name="TranscriptIcon"
+                                                            Grid.Column="2"
+                                                            Foreground="#4CAF50"
+                                                            Glyph="&#xE73E;" />
                                                     </Grid>
-                                                    
+
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="False" Margin="0,0,10,0" 
-                                                                 x:Name="MedicalCheckBox" 
-                                                                 Checked="MaterialCheckBox_Checked" 
-                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
-                                                        <TextBlock Grid.Column="1" Text="体检表" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" x:Name="MedicalIcon" Glyph="&#xE711;" Foreground="#FF9800"/>
+                                                        <CheckBox
+                                                            x:Name="MedicalCheckBox"
+                                                            Grid.Column="0"
+                                                            Margin="0,0,10,0"
+                                                            Checked="MaterialCheckBox_Checked"
+                                                            IsChecked="False"
+                                                            Unchecked="MaterialCheckBox_Unchecked" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Text="体检表" />
+                                                        <FontIcon
+                                                            x:Name="MedicalIcon"
+                                                            Grid.Column="2"
+                                                            Foreground="#FF9800"
+                                                            Glyph="&#xE711;" />
                                                     </Grid>
-                                                    
+
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"/>
-                                                            <ColumnDefinition Width="*"/>
-                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="True" Margin="0,0,10,0" 
-                                                                 x:Name="RewardPunishmentCheckBox" 
-                                                                 Checked="MaterialCheckBox_Checked" 
-                                                                 Unchecked="MaterialCheckBox_Unchecked"/>
-                                                        <TextBlock Grid.Column="1" Text="奖惩材料" VerticalAlignment="Center"/>
-                                                        <FontIcon Grid.Column="2" x:Name="RewardPunishmentIcon" Glyph="&#xE73E;" Foreground="#4CAF50"/>
+                                                        <CheckBox
+                                                            x:Name="RewardPunishmentCheckBox"
+                                                            Grid.Column="0"
+                                                            Margin="0,0,10,0"
+                                                            Checked="MaterialCheckBox_Checked"
+                                                            IsChecked="True"
+                                                            Unchecked="MaterialCheckBox_Unchecked" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Text="奖惩材料" />
+                                                        <FontIcon
+                                                            x:Name="RewardPunishmentIcon"
+                                                            Grid.Column="2"
+                                                            Foreground="#4CAF50"
+                                                            Glyph="&#xE73E;" />
                                                     </Grid>
                                                 </StackPanel>
                                             </StackPanel>
 
-                                            <!-- 整理进度 -->
+                                            <!--  整理进度  -->
                                             <StackPanel Spacing="8">
-                                                <TextBlock Text="整理进度" 
-                                                          FontSize="14" 
-                                                          FontWeight="SemiBold" 
-                                                          Foreground="{ThemeResource SystemAccentColor}"/>
-                                                <ProgressBar x:Name="OrganizeProgressBar" Value="75" Maximum="100" Height="12"/>
-                                                <TextBlock x:Name="OrganizeProgressText" 
-                                                          Text="75% 完成 (3/4 项)" 
-                                                          FontSize="12"
-                                                          HorizontalAlignment="Center"/>
+                                                <TextBlock
+                                                    FontSize="14"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource SystemAccentColor}"
+                                                    Text="整理进度" />
+                                                <ProgressBar
+                                                    x:Name="OrganizeProgressBar"
+                                                    Height="12"
+                                                    Maximum="100"
+                                                    Value="75" />
+                                                <TextBlock
+                                                    x:Name="OrganizeProgressText"
+                                                    HorizontalAlignment="Center"
+                                                    FontSize="12"
+                                                    Text="75% 完成 (3/4 项)" />
                                             </StackPanel>
 
-                                            <!-- 操作按钮 -->
-                                            <StackPanel Spacing="10" Margin="0,20,0,0">
-                                                <Button Content="生成调档函" 
-                                                       Style="{StaticResource AccentButtonStyle}"
-                                                       HorizontalAlignment="Stretch"
-                                                       Click="GenerateTransferLetterDetailButton_Click"/>
-                                                <Button Content="打印档案袋标签" 
-                                                       HorizontalAlignment="Stretch"
-                                                       Click="PrintArchiveLabelButton_Click"/>
-                                                <Button Content="标记完成" 
-                                                       HorizontalAlignment="Stretch"
-                                                       Click="MarkCompleteButton_Click"/>
+                                            <!--  操作按钮  -->
+                                            <StackPanel Margin="0,20,0,0" Spacing="10">
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    Click="GenerateTransferLetterDetailButton_Click"
+                                                    Content="生成调档函"
+                                                    Style="{StaticResource AccentButtonStyle}" />
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    Click="PrintArchiveLabelButton_Click"
+                                                    Content="打印档案袋标签" />
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    Click="MarkCompleteButton_Click"
+                                                    Content="标记完成" />
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>
@@ -451,97 +649,154 @@
                         </Grid>
                     </PivotItem>
 
-                    <!-- 转递记录标签页 -->
+                    <!--  转递记录标签页  -->
                     <PivotItem Header="转递记录">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <!-- 记录操作区 -->
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
-                                <Button Content="记录寄出" Style="{StaticResource AccentButtonStyle}" Click="RecordShipmentButton_Click"/>
-                                <Button Content="批量录入快递单号" Click="BatchInputTrackingButton_Click"/>
-                                <ComboBox PlaceholderText="转递状态" Width="120" SelectionChanged="TransferStatusComboBox_SelectionChanged">
-                                    <ComboBoxItem Content="已寄出"/>
-                                    <ComboBoxItem Content="运输中"/>
-                                    <ComboBoxItem Content="已签收"/>
-                                    <ComboBoxItem Content="全部"/>
+                            <!--  记录操作区  -->
+                            <StackPanel
+                                Grid.Row="0"
+                                Margin="0,0,0,20"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <Button
+                                    Click="RecordShipmentButton_Click"
+                                    Content="记录寄出"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                                <Button Click="BatchInputTrackingButton_Click" Content="批量录入快递单号" />
+                                <ComboBox
+                                    Width="120"
+                                    PlaceholderText="转递状态"
+                                    SelectionChanged="TransferStatusComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="已寄出" />
+                                    <ComboBoxItem Content="运输中" />
+                                    <ComboBoxItem Content="已签收" />
+                                    <ComboBoxItem Content="全部" />
                                 </ComboBox>
-                                <Button Content="导出转递清单" Click="ExportTransferListButton_Click"/>
+                                <Button Click="ExportTransferListButton_Click" Content="导出转递清单" />
                             </StackPanel>
 
-                            <!-- 转递记录列表 -->
-                            <Border Grid.Row="1" 
-                                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                                   CornerRadius="8" 
-                                   Padding="0">
+                            <!--  转递记录列表  -->
+                            <Border
+                                Grid.Row="1"
+                                Padding="0"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="8">
                                 <ListView x:Name="TransferRecordList">
                                     <ListView.Header>
-                                        <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
-                                             Padding="15,10">
+                                        <Grid Padding="15,10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="200" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="学号" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="1" Text="姓名" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="2" Text="接收单位" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="3" Text="寄出日期" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="4" Text="快递单号" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="5" Text="快递公司" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="6" Text="状态" FontWeight="SemiBold"/>
-                                            <TextBlock Grid.Column="7" Text="操作" FontWeight="SemiBold"/>
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                FontWeight="SemiBold"
+                                                Text="学号" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                FontWeight="SemiBold"
+                                                Text="姓名" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                FontWeight="SemiBold"
+                                                Text="接收单位" />
+                                            <TextBlock
+                                                Grid.Column="3"
+                                                FontWeight="SemiBold"
+                                                Text="寄出日期" />
+                                            <TextBlock
+                                                Grid.Column="4"
+                                                FontWeight="SemiBold"
+                                                Text="快递单号" />
+                                            <TextBlock
+                                                Grid.Column="5"
+                                                FontWeight="SemiBold"
+                                                Text="快递公司" />
+                                            <TextBlock
+                                                Grid.Column="6"
+                                                FontWeight="SemiBold"
+                                                Text="状态" />
+                                            <TextBlock
+                                                Grid.Column="7"
+                                                FontWeight="SemiBold"
+                                                Text="操作" />
                                         </Grid>
                                     </ListView.Header>
-                                    
+
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Padding="15,10">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="200"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="200" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="2021001" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="张三" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="华为技术有限公司" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="3" Text="2024-01-25" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="4" Text="SF123456789" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="5" Text="顺丰速运" VerticalAlignment="Center"/>
-                                                <Border Grid.Column="6" 
-                                                       Background="#4CAF50" 
-                                                       CornerRadius="8" 
-                                                       Padding="6,2"
-                                                       HorizontalAlignment="Center">
-                                                    <TextBlock Text="已签收" 
-                                                              Foreground="White" 
-                                                              FontSize="11"/>
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    VerticalAlignment="Center"
+                                                    Text="2021001" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    VerticalAlignment="Center"
+                                                    Text="张三" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    VerticalAlignment="Center"
+                                                    Text="华为技术有限公司" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    VerticalAlignment="Center"
+                                                    Text="2024-01-25" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    VerticalAlignment="Center"
+                                                    Text="SF123456789" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    VerticalAlignment="Center"
+                                                    Text="顺丰速运" />
+                                                <Border
+                                                    Grid.Column="6"
+                                                    Padding="6,2"
+                                                    HorizontalAlignment="Center"
+                                                    Background="#4CAF50"
+                                                    CornerRadius="8">
+                                                    <TextBlock
+                                                        FontSize="11"
+                                                        Foreground="White"
+                                                        Text="已签收" />
                                                 </Border>
-                                                <StackPanel Grid.Column="7" 
-                                                           Orientation="Horizontal" 
-                                                           Spacing="5">
-                                                    <Button Content="跟踪" 
-                                                           Style="{StaticResource AccentButtonStyle}"
-                                                           FontSize="11"
-                                                           Padding="8,4"
-                                                           Click="TrackPackageButton_Click"/>
-                                                    <Button Content="详情" 
-                                                           FontSize="11"
-                                                           Padding="8,4"
-                                                           Click="ViewDetailsButton_Click"/>
+                                                <StackPanel
+                                                    Grid.Column="7"
+                                                    Orientation="Horizontal"
+                                                    Spacing="5">
+                                                    <Button
+                                                        Padding="8,4"
+                                                        Click="TrackPackageButton_Click"
+                                                        Content="跟踪"
+                                                        FontSize="11"
+                                                        Style="{StaticResource AccentButtonStyle}" />
+                                                    <Button
+                                                        Padding="8,4"
+                                                        Click="ViewDetailsButton_Click"
+                                                        Content="详情"
+                                                        FontSize="11" />
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>
