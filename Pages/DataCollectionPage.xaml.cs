@@ -17,10 +17,12 @@ using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using Microsoft.UI;
+using GFMS.Models;
+using GFMS.Services;
 
 namespace GFMS.Pages
 {
-    // å­¦ç”Ÿä¿¡æ¯æ•°æ®æ¨¡å‹
+    // Ñ§ÉúĞÅÏ¢Êı¾İÄ£ĞÍ
     public class StudentInfo
     {
         public string StudentId { get; set; } = string.Empty;
@@ -35,10 +37,10 @@ namespace GFMS.Pages
         public string Address { get; set; } = string.Empty;
         public string ParentName { get; set; } = string.Empty;
         public string ParentPhone { get; set; } = string.Empty;
-        public string Status { get; set; } = "æœªå®Œæˆ";
+        public string Status { get; set; } = "Î´Íê³É";
     }
 
-    // æˆç»©ä¿¡æ¯æ•°æ®æ¨¡å‹
+    // ³É¼¨ĞÅÏ¢Êı¾İÄ£ĞÍ
     public class GradeInfo
     {
         public string StudentId { get; set; } = string.Empty;
@@ -52,12 +54,12 @@ namespace GFMS.Pages
         public string Semester { get; set; } = string.Empty;
     }
 
-    // å¥–æƒ©è®°å½•æ•°æ®æ¨¡å‹
+    // ½±³Í¼ÇÂ¼Êı¾İÄ£ĞÍ
     public class RewardPunishmentRecord
     {
         public string StudentId { get; set; } = string.Empty;
         public string StudentName { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty; // "å¥–åŠ±" æˆ– "å¤„åˆ†"
+        public string Type { get; set; } = string.Empty; // "½±Àø" »ò "´¦·Ö"
         public string Name { get; set; } = string.Empty;
         public string Level { get; set; } = string.Empty;
         public DateTimeOffset? Date { get; set; }
@@ -68,45 +70,45 @@ namespace GFMS.Pages
 
     public sealed partial class DataCollectionPage : Page
     {
-        // æ•°æ®é›†åˆ
+        // Êı¾İ¼¯ºÏ
         public ObservableCollection<StudentInfo> Students { get; set; }
         public ObservableCollection<GradeInfo> Grades { get; set; }
         public ObservableCollection<RewardPunishmentRecord> Records { get; set; }
 
-        // å½“å‰é€‰ä¸­çš„å­¦ç”Ÿ
+        // µ±Ç°Ñ¡ÖĞµÄÑ§Éú
         private StudentInfo? _selectedStudent;
         private RewardPunishmentRecord? _selectedRecord;
 
         public DataCollectionPage()
         {
             InitializeComponent();
-            
-            // åˆå§‹åŒ–æ•°æ®é›†åˆ
+
+            // ³õÊ¼»¯Êı¾İ¼¯ºÏ
             Students = new ObservableCollection<StudentInfo>();
             Grades = new ObservableCollection<GradeInfo>();
             Records = new ObservableCollection<RewardPunishmentRecord>();
 
-            // ç»‘å®šæ•°æ®æº
+            // °ó¶¨Êı¾İÔ´
             StudentListView.ItemsSource = Students;
             GradeListView.ItemsSource = Grades;
             RewardPunishmentListView.ItemsSource = Records;
 
-            // æ³¨å†Œäº‹ä»¶å¤„ç†å™¨
+            // ×¢²áÊÂ¼ş´¦ÀíÆ÷
             RegisterEventHandlers();
 
-            // åŠ è½½åˆå§‹æ•°æ®
+            // ¼ÓÔØ³õÊ¼Êı¾İ
             LoadInitialData();
         }
 
         private void RegisterEventHandlers()
         {
-            // åŸºç¡€ä¿¡æ¯æ ‡ç­¾é¡µäº‹ä»¶
+            // »ù´¡ĞÅÏ¢±êÇ©Ò³ÊÂ¼ş
             StudentListView.SelectionChanged += StudentListView_SelectionChanged;
-            
-            // å¥–æƒ©è®°å½•åˆ—è¡¨é€‰æ‹©äº‹ä»¶
+
+            // ½±³Í¼ÇÂ¼ÁĞ±íÑ¡ÔñÊÂ¼ş
             RewardPunishmentListView.SelectionChanged += RewardPunishmentListView_SelectionChanged;
-            
-            // æŸ¥æ‰¾å¹¶æ³¨å†ŒæŒ‰é’®äº‹ä»¶
+
+            // ²éÕÒ²¢×¢²á°´Å¥ÊÂ¼ş
             var importButton = FindName("ImportStudentInfoButton") as Button;
             if (importButton?.Flyout is MenuFlyout flyout)
             {
@@ -119,59 +121,59 @@ namespace GFMS.Pages
                 }
             }
 
-            // æ³¨å†Œå…¶ä»–æŒ‰é’®äº‹ä»¶
+            // ×¢²áÆäËû°´Å¥ÊÂ¼ş
             RegisterButtonEvents();
-            
-            // æ³¨å†Œç­›é€‰æ§ä»¶äº‹ä»¶
+
+            // ×¢²áÉ¸Ñ¡¿Ø¼şÊÂ¼ş
             RegisterFilterEvents();
-            
-            // æ³¨å†Œæœç´¢æ¡†äº‹ä»¶
+
+            // ×¢²áËÑË÷¿òÊÂ¼ş
             RegisterSearchEvents();
         }
 
         private void RegisterButtonEvents()
         {
-            // åŸºç¡€ä¿¡æ¯é¡µé¢æŒ‰é’®
+            // »ù´¡ĞÅÏ¢Ò³Ãæ°´Å¥
             var buttons = GetButtonsFromGrid();
             foreach (var button in buttons)
             {
                 var content = GetButtonContent(button);
                 switch (content)
                 {
-                    case "æ–°å¢å­¦ç”Ÿ":
+                    case "ĞÂÔöÑ§Éú":
                         button.Click += AddStudentButton_Click;
                         break;
-                    case "å¯¼å‡ºæ•°æ®":
+                    case "µ¼³öÊı¾İ":
                         button.Click += ExportDataButton_Click;
                         break;
-                    case "ä¿å­˜ä¿¡æ¯":
+                    case "±£´æĞÅÏ¢":
                         button.Click += SaveStudentButton_Click;
                         break;
-                    case "åˆ é™¤å­¦ç”Ÿ":
+                    case "É¾³ıÑ§Éú":
                         button.Click += DeleteStudentButton_Click;
                         break;
-                    case "é‡ç½®":
+                    case "ÖØÖÃ":
                         button.Click += ResetStudentButton_Click;
                         break;
-                    case "æ‰¹é‡å¯¼å…¥æˆç»©":
+                    case "ÅúÁ¿µ¼Èë³É¼¨":
                         button.Click += ImportGradesButton_Click;
                         break;
-                    case "æ·»åŠ è®°å½•":
+                    case "Ìí¼Ó¼ÇÂ¼":
                         button.Click += AddRecordButton_Click;
                         break;
-                    case "æ‰¹é‡å¯¼å…¥":
+                    case "ÅúÁ¿µ¼Èë":
                         button.Click += ImportRecordsButton_Click;
                         break;
-                    case "ä¿å­˜è®°å½•":
+                    case "±£´æ¼ÇÂ¼":
                         button.Click += SaveRecordButton_Click;
                         break;
-                    case "åˆ é™¤":
+                    case "É¾³ı":
                         button.Click += DeleteRecordButton_Click;
                         break;
-                    case "æ¸…ç©º":
+                    case "Çå¿Õ":
                         button.Click += ClearRecordButton_Click;
                         break;
-                    case "é€‰æ‹©æ–‡ä»¶":
+                    case "Ñ¡ÔñÎÄ¼ş":
                         button.Click += SelectFileButton_Click;
                         break;
                 }
@@ -181,7 +183,7 @@ namespace GFMS.Pages
         private List<Button> GetButtonsFromGrid()
         {
             var buttons = new List<Button>();
-            // é€’å½’æŸ¥æ‰¾æ‰€æœ‰Buttonæ§ä»¶
+            // µİ¹é²éÕÒËùÓĞButton¿Ø¼ş
             FindButtons(this, buttons);
             return buttons;
         }
@@ -217,23 +219,23 @@ namespace GFMS.Pages
 
         private void RegisterFilterEvents()
         {
-            // æŸ¥æ‰¾å¹¶æ³¨å†Œç­›é€‰æ§ä»¶äº‹ä»¶
+            // ²éÕÒ²¢×¢²áÉ¸Ñ¡¿Ø¼şÊÂ¼ş
             var comboBoxes = GetComboBoxesFromGrid();
             foreach (var comboBox in comboBoxes)
             {
                 var placeholder = comboBox.PlaceholderText;
                 switch (placeholder)
                 {
-                    case "é€‰æ‹©å­¦æœŸ":
+                    case "Ñ¡ÔñÑ§ÆÚ":
                         comboBox.SelectionChanged += (s, e) => FilterGradesBySemester((comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString());
                         break;
-                    case "é€‰æ‹©ä¸“ä¸š":
+                    case "Ñ¡Ôñ×¨Òµ":
                         comboBox.SelectionChanged += (s, e) => FilterGradesByMajor((comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString());
                         break;
-                    case "è®°å½•ç±»å‹":
+                    case "¼ÇÂ¼ÀàĞÍ":
                         comboBox.SelectionChanged += (s, e) => FilterRecordsByType((comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString());
                         break;
-                    case "è®°å½•çº§åˆ«":
+                    case "¼ÇÂ¼¼¶±ğ":
                         comboBox.SelectionChanged += (s, e) => FilterRecordsByLevel((comboBox.SelectedItem as ComboBoxItem)?.Content?.ToString());
                         break;
                 }
@@ -261,1138 +263,1242 @@ namespace GFMS.Pages
             }
         }
 
-         private void RegisterSearchEvents()
-         {
-             // æŸ¥æ‰¾æœç´¢æ¡†å¹¶æ³¨å†Œäº‹ä»¶
-             var textBoxes = GetTextBoxesFromGrid();
-             foreach (var textBox in textBoxes)
-             {
-                 if (textBox.PlaceholderText?.Contains("æœç´¢") == true)
-                 {
-                     textBox.TextChanged += SearchTextBox_TextChanged;
-                 }
-             }
-         }
-
-         private List<TextBox> GetTextBoxesFromGrid()
-         {
-             var textBoxes = new List<TextBox>();
-             FindTextBoxes(this, textBoxes);
-             return textBoxes;
-         }
-
-         private void FindTextBoxes(DependencyObject parent, List<TextBox> textBoxes)
-         {
-             var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
-             for (int i = 0; i < childCount; i++)
-             {
-                 var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
-                 if (child is TextBox textBox)
-                 {
-                     textBoxes.Add(textBox);
-                 }
-                 FindTextBoxes(child, textBoxes);
-             }
-         }
-
-         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
-         {
-             if (sender is TextBox searchBox)
-             {
-                 SearchStudents(searchBox.Text);
-             }
-         }
-
-         private void LoadInitialData()
+        private void RegisterSearchEvents()
         {
-            // TODO: ä»æ•°æ®åº“åŠ è½½å­¦ç”Ÿä¿¡æ¯
+            // ²éÕÒËÑË÷¿ò²¢×¢²áÊÂ¼ş
+            var textBoxes = GetTextBoxesFromGrid();
+            foreach (var textBox in textBoxes)
+            {
+                if (textBox.PlaceholderText?.Contains("ËÑË÷") == true)
+                {
+                    textBox.TextChanged += SearchTextBox_TextChanged;
+                }
+            }
+        }
+
+        private List<TextBox> GetTextBoxesFromGrid()
+        {
+            var textBoxes = new List<TextBox>();
+            FindTextBoxes(this, textBoxes);
+            return textBoxes;
+        }
+
+        private void FindTextBoxes(DependencyObject parent, List<TextBox> textBoxes)
+        {
+            var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is TextBox textBox)
+                {
+                    textBoxes.Add(textBox);
+                }
+                FindTextBoxes(child, textBoxes);
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox searchBox)
+            {
+                SearchStudents(searchBox.Text);
+            }
+        }
+
+        private void LoadInitialData()
+        {
+            // TODO: ´ÓÊı¾İ¿â¼ÓÔØÑ§ÉúĞÅÏ¢
             // var students = await StudentService.GetAllStudentsAsync();
             // foreach (var student in students)
             // {
             //     Students.Add(student);
             // }
 
-            // ä¸´æ—¶æ·»åŠ ç¤ºä¾‹æ•°æ®
+            // ÁÙÊ±Ìí¼ÓÊ¾ÀıÊı¾İ
             Students.Add(new StudentInfo
             {
                 StudentId = "2021001",
-                Name = "å¼ ä¸‰",
-                Gender = "ç”·",
-                Major = "è®¡ç®—æœºç§‘å­¦ä¸æŠ€æœ¯",
-                Class = "è®¡ç§‘2101",
-                Status = "å·²å®Œæˆ"
+                Name = "ÕÅÈı",
+                Gender = "ÄĞ",
+                Major = "¼ÆËã»ú¿ÆÑ§Óë¼¼Êõ",
+                Class = "¼Æ¿Æ2101",
+                Status = "ÒÑÍê³É"
             });
 
             Students.Add(new StudentInfo
             {
                 StudentId = "2021002",
-                Name = "æå››",
-                Gender = "å¥³",
-                Major = "è½¯ä»¶å·¥ç¨‹",
-                Class = "è½¯å·¥2101",
-                Status = "æœªå®Œæˆ"
+                Name = "ÀîËÄ",
+                Gender = "Å®",
+                Major = "Èí¼ş¹¤³Ì",
+                Class = "Èí¹¤2101",
+                Status = "Î´Íê³É"
             });
 
-            // TODO: åŠ è½½æˆç»©æ•°æ®
+            // TODO: ¼ÓÔØ³É¼¨Êı¾İ
             // var grades = await GradeService.GetAllGradesAsync();
             // foreach (var grade in grades)
             // {
             //     Grades.Add(grade);
             // }
 
-            // ä¸´æ—¶æ·»åŠ ç¤ºä¾‹æˆç»©æ•°æ®
+            // ÁÙÊ±Ìí¼ÓÊ¾Àı³É¼¨Êı¾İ
             Grades.Add(new GradeInfo
             {
                 StudentId = "2021001",
-                StudentName = "å¼ ä¸‰",
-                CourseName = "é«˜ç­‰æ•°å­¦",
+                StudentName = "ÕÅÈı",
+                CourseName = "¸ßµÈÊıÑ§",
                 Credits = 4,
                 Score = 85,
                 GPA = 3.2,
-                GradeType = "æœŸæœ«æˆç»©",
-                Semester = "2023-2024æ˜¥å­£"
+                GradeType = "ÆÚÄ©³É¼¨",
+                Semester = "2023-2024´º¼¾"
             });
 
-            // TODO: åŠ è½½å¥–æƒ©è®°å½•
+            // TODO: ¼ÓÔØ½±³Í¼ÇÂ¼
             // var records = await RecordService.GetAllRecordsAsync();
             // foreach (var record in records)
             // {
             //     Records.Add(record);
             // }
 
-            // ä¸´æ—¶æ·»åŠ ç¤ºä¾‹å¥–æƒ©è®°å½•
-             Records.Add(new RewardPunishmentRecord
-             {
-                 StudentId = "2021001",
-                 StudentName = "å¼ ä¸‰",
-                 Type = "å¥–åŠ±",
-                 Name = "ä¸‰å¥½å­¦ç”Ÿ",
-                 Level = "æ ¡çº§",
-                 Date = DateTimeOffset.Parse("2023-12-01")
-             });
-         }
-
-         #region åŸºç¡€ä¿¡æ¯æ ‡ç­¾é¡µäº‹ä»¶å¤„ç†
-
-         private void StudentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (StudentListView.SelectedItem is StudentInfo selectedStudent)
-             {
-                 _selectedStudent = selectedStudent;
-                 LoadStudentDetails(selectedStudent);
-             }
-         }
-
-         private void LoadStudentDetails(StudentInfo student)
-         {
-             // æŸ¥æ‰¾è¯¦æƒ…é¢æ¿ä¸­çš„æ§ä»¶å¹¶å¡«å……æ•°æ®
-             var detailsPanel = FindDetailsPanel();
-             if (detailsPanel != null)
-             {
-                 FillStudentDetailsForm(detailsPanel, student);
-             }
-         }
-
-         private StackPanel? FindDetailsPanel()
-         {
-             // é€’å½’æŸ¥æ‰¾è¯¦æƒ…é¢æ¿
-             return FindChildOfType<StackPanel>(this, "å­¦ç”Ÿè¯¦ç»†ä¿¡æ¯");
-         }
-
-         private T? FindChildOfType<T>(DependencyObject parent, string identifier = "") where T : DependencyObject
-         {
-             var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
-             for (int i = 0; i < childCount; i++)
-             {
-                 var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
-                 if (child is T target)
-                 {
-                     if (string.IsNullOrEmpty(identifier) || 
-                         (target is TextBlock tb && tb.Text == identifier))
-                         return target;
-                 }
-                 var result = FindChildOfType<T>(child, identifier);
-                 if (result != null) return result;
-             }
-             return null;
-         }
-
-         private void FillStudentDetailsForm(StackPanel panel, StudentInfo student)
-         {
-             // æŸ¥æ‰¾å¹¶å¡«å……è¡¨å•æ§ä»¶
-             var textBoxes = new List<TextBox>();
-             var comboBoxes = new List<ComboBox>();
-             var datePickers = new List<DatePicker>();
-             
-             FindFormControls(panel, textBoxes, comboBoxes, datePickers);
-
-             // æ ¹æ®Headerå±æ€§å¡«å……æ•°æ®
-             foreach (var textBox in textBoxes)
-             {
-                 switch (textBox.Header?.ToString())
-                 {
-                     case "å­¦å·":
-                         textBox.Text = student.StudentId;
-                         break;
-                     case "å§“å":
-                         textBox.Text = student.Name;
-                         break;
-                     case "èº«ä»½è¯å·":
-                         textBox.Text = student.IdCard;
-                         break;
-                     case "ä¸“ä¸š":
-                         textBox.Text = student.Major;
-                         break;
-                     case "ç­çº§":
-                         textBox.Text = student.Class;
-                         break;
-                     case "è”ç³»ç”µè¯":
-                         textBox.Text = student.Phone;
-                         break;
-                     case "é‚®ç®±åœ°å€":
-                         textBox.Text = student.Email;
-                         break;
-                     case "å®¶åº­ä½å€":
-                         textBox.Text = student.Address;
-                         break;
-                     case "å®¶é•¿å§“å":
-                         textBox.Text = student.ParentName;
-                         break;
-                     case "å®¶é•¿è”ç³»æ–¹å¼":
-                         textBox.Text = student.ParentPhone;
-                         break;
-                 }
-             }
-
-             // å¡«å……æ€§åˆ«ä¸‹æ‹‰æ¡†
-             foreach (var comboBox in comboBoxes)
-             {
-                 if (comboBox.Header?.ToString() == "æ€§åˆ«")
-                 {
-                     comboBox.SelectedIndex = student.Gender == "ç”·" ? 0 : 1;
-                 }
-             }
-
-             // å¡«å……å‡ºç”Ÿæ—¥æœŸ
-             foreach (var datePicker in datePickers)
-             {
-                 if (datePicker.Header?.ToString() == "å‡ºç”Ÿæ—¥æœŸ")
-                 {
-                     datePicker.Date = student.BirthDate ?? DateTimeOffset.Now;
-                 }
-             }
-         }
-
-         private void FindFormControls(DependencyObject parent, List<TextBox> textBoxes, List<ComboBox> comboBoxes, List<DatePicker> datePickers)
-         {
-             var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
-             for (int i = 0; i < childCount; i++)
-             {
-                 var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
-                 
-                 if (child is TextBox textBox)
-                     textBoxes.Add(textBox);
-                 else if (child is ComboBox comboBox)
-                     comboBoxes.Add(comboBox);
-                 else if (child is DatePicker datePicker)
-                     datePickers.Add(datePicker);
-                 
-                 FindFormControls(child, textBoxes, comboBoxes, datePickers);
-             }
-         }
-
-         private async void ImportMenuItem_Click(object sender, RoutedEventArgs e)
-         {
-             if (sender is MenuFlyoutItem menuItem)
-             {
-                 switch (menuItem.Text)
-                 {
-                     case "ä»Excelå¯¼å…¥":
-                         await ImportFromExcel();
-                         break;
-                     case "ä»æ•™åŠ¡ç³»ç»Ÿå¯¼å…¥":
-                         await ImportFromEducationSystem();
-                         break;
-                     case "ä¸‹è½½æ¨¡æ¿":
-                         await DownloadTemplate();
-                         break;
-                 }
-             }
-         }
-
-         private async Task ImportFromExcel()
-         {
-             try
-             {
-                 var picker = new FileOpenPicker();
-                 picker.FileTypeFilter.Add(".xlsx");
-                 picker.FileTypeFilter.Add(".xls");
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSingleFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: å®ç°Excelæ–‡ä»¶è§£æé€»è¾‘
-                     // var students = await ExcelImportService.ImportStudentsFromExcel(file);
-                     // foreach (var student in students)
-                     // {
-                     //     Students.Add(student);
-                     // }
-                     
-                     ShowInfoDialog("å¯¼å…¥æˆåŠŸ", "Excelæ–‡ä»¶å¯¼å…¥å®Œæˆï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("å¯¼å…¥å¤±è´¥", $"Excelå¯¼å…¥æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private async Task ImportFromEducationSystem()
-         {
-             try
-             {
-                 // TODO: å®ç°ä»æ•™åŠ¡ç³»ç»Ÿå¯¼å…¥çš„é€»è¾‘
-                 // var students = await EducationSystemService.ImportStudentsAsync();
-                 // foreach (var student in students)
-                 // {
-                 //     Students.Add(student);
-                 // }
-                 
-                 ShowInfoDialog("å¯¼å…¥æˆåŠŸ", "ä»æ•™åŠ¡ç³»ç»Ÿå¯¼å…¥å®Œæˆï¼");
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("å¯¼å…¥å¤±è´¥", $"ä»æ•™åŠ¡ç³»ç»Ÿå¯¼å…¥æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private async Task DownloadTemplate()
-         {
-             try
-             {
-                 var picker = new FileSavePicker();
-                 picker.FileTypeChoices.Add("Excelæ–‡ä»¶", new List<string> { ".xlsx" });
-                 picker.SuggestedFileName = "å­¦ç”Ÿä¿¡æ¯å¯¼å…¥æ¨¡æ¿";
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSaveFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: ç”ŸæˆExcelæ¨¡æ¿æ–‡ä»¶
-                     // await ExcelTemplateService.GenerateStudentTemplate(file);
-                     
-                     ShowInfoDialog("ä¸‹è½½æˆåŠŸ", "æ¨¡æ¿æ–‡ä»¶å·²ä¿å­˜ï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("ä¸‹è½½å¤±è´¥", $"æ¨¡æ¿ä¸‹è½½æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private void AddStudentButton_Click(object sender, RoutedEventArgs e)
-         {
-             // æ¸…ç©ºè¡¨å•å¹¶å‡†å¤‡æ·»åŠ æ–°å­¦ç”Ÿ
-             _selectedStudent = null;
-             ClearStudentForm();
-             
-             // ç”Ÿæˆæ–°çš„å­¦å·
-             var newStudentId = GenerateNewStudentId();
-             var textBoxes = new List<TextBox>();
-             FindFormControls(this, textBoxes, new List<ComboBox>(), new List<DatePicker>());
-             
-             foreach (var textBox in textBoxes)
-             {
-                 if (textBox.Header?.ToString() == "å­¦å·")
-                 {
-                     textBox.Text = newStudentId;
-                     break;
-                 }
-             }
-         }
-
-         private string GenerateNewStudentId()
-         {
-             // TODO: å®ç°å­¦å·ç”Ÿæˆé€»è¾‘
-             // return StudentService.GenerateNewStudentId();
-             
-             // ä¸´æ—¶å®ç°ï¼šåŸºäºå½“å‰å¹´ä»½å’Œåºå·
-             var year = DateTime.Now.Year;
-             var maxId = Students.Where(s => s.StudentId.StartsWith(year.ToString()))
-                               .Select(s => s.StudentId)
-                               .DefaultIfEmpty($"{year}000")
-                               .Max();
-             
-             if (int.TryParse(maxId.Substring(4), out int lastNumber))
-             {
-                 return $"{year}{(lastNumber + 1):D3}";
-             }
-             return $"{year}001";
-         }
-
-         private void ClearStudentForm()
-         {
-             var textBoxes = new List<TextBox>();
-             var comboBoxes = new List<ComboBox>();
-             var datePickers = new List<DatePicker>();
-             
-             FindFormControls(this, textBoxes, comboBoxes, datePickers);
-
-             foreach (var textBox in textBoxes)
-             {
-                 textBox.Text = string.Empty;
-             }
-             
-             foreach (var comboBox in comboBoxes)
-             {
-                 comboBox.SelectedIndex = -1;
-             }
-             
-             foreach (var datePicker in datePickers)
-             {
-                 datePicker.Date = DateTimeOffset.Now;
-             }
-         }
-
-         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var picker = new FileSavePicker();
-                 picker.FileTypeChoices.Add("Excelæ–‡ä»¶", new List<string> { ".xlsx" });
-                 picker.SuggestedFileName = $"å­¦ç”Ÿä¿¡æ¯_{DateTime.Now:yyyyMMdd}";
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSaveFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: å®ç°æ•°æ®å¯¼å‡ºé€»è¾‘
-                     // await ExcelExportService.ExportStudentsToExcel(Students.ToList(), file);
-                     
-                     ShowInfoDialog("å¯¼å‡ºæˆåŠŸ", "å­¦ç”Ÿæ•°æ®å·²å¯¼å‡ºåˆ°Excelæ–‡ä»¶ï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("å¯¼å‡ºå¤±è´¥", $"æ•°æ®å¯¼å‡ºæ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private async void SaveStudentButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var student = GetStudentFromForm();
-                 if (student == null) return;
-
-                 if (_selectedStudent == null)
-                 {
-                     // æ–°å¢å­¦ç”Ÿ
-                     // TODO: ä¿å­˜åˆ°æ•°æ®åº“
-                     // await StudentService.AddStudentAsync(student);
-                     
-                     Students.Add(student);
-                     ShowInfoDialog("ä¿å­˜æˆåŠŸ", "å­¦ç”Ÿä¿¡æ¯å·²æ·»åŠ ï¼");
-                 }
-                 else
-                 {
-                     // æ›´æ–°å­¦ç”Ÿä¿¡æ¯
-                     // TODO: æ›´æ–°æ•°æ®åº“
-                     // await StudentService.UpdateStudentAsync(student);
-                     
-                     var index = Students.IndexOf(_selectedStudent);
-                     if (index >= 0)
-                     {
-                         Students[index] = student;
-                     }
-                     ShowInfoDialog("ä¿å­˜æˆåŠŸ", "å­¦ç”Ÿä¿¡æ¯å·²æ›´æ–°ï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("ä¿å­˜å¤±è´¥", $"ä¿å­˜å­¦ç”Ÿä¿¡æ¯æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private StudentInfo? GetStudentFromForm()
-         {
-             var textBoxes = new List<TextBox>();
-             var comboBoxes = new List<ComboBox>();
-             var datePickers = new List<DatePicker>();
-             
-             FindFormControls(this, textBoxes, comboBoxes, datePickers);
-
-             var student = new StudentInfo();
-             
-             foreach (var textBox in textBoxes)
-             {
-                 switch (textBox.Header?.ToString())
-                 {
-                     case "å­¦å·":
-                         if (string.IsNullOrWhiteSpace(textBox.Text))
-                         {
-                             ShowErrorDialog("éªŒè¯å¤±è´¥", "å­¦å·ä¸èƒ½ä¸ºç©ºï¼");
-                             return null;
-                         }
-                         student.StudentId = textBox.Text.Trim();
-                         break;
-                     case "å§“å":
-                         if (string.IsNullOrWhiteSpace(textBox.Text))
-                         {
-                             ShowErrorDialog("éªŒè¯å¤±è´¥", "å§“åä¸èƒ½ä¸ºç©ºï¼");
-                             return null;
-                         }
-                         student.Name = textBox.Text.Trim();
-                         break;
-                     case "èº«ä»½è¯å·":
-                         student.IdCard = textBox.Text.Trim();
-                         break;
-                     case "ä¸“ä¸š":
-                         student.Major = textBox.Text.Trim();
-                         break;
-                     case "ç­çº§":
-                         student.Class = textBox.Text.Trim();
-                         break;
-                     case "è”ç³»ç”µè¯":
-                         student.Phone = textBox.Text.Trim();
-                         break;
-                     case "é‚®ç®±åœ°å€":
-                         student.Email = textBox.Text.Trim();
-                         break;
-                     case "å®¶åº­ä½å€":
-                         student.Address = textBox.Text.Trim();
-                         break;
-                     case "å®¶é•¿å§“å":
-                         student.ParentName = textBox.Text.Trim();
-                         break;
-                     case "å®¶é•¿è”ç³»æ–¹å¼":
-                         student.ParentPhone = textBox.Text.Trim();
-                         break;
-                 }
-             }
-
-             foreach (var comboBox in comboBoxes)
-             {
-                 if (comboBox.Header?.ToString() == "æ€§åˆ«" && comboBox.SelectedItem is ComboBoxItem item)
-                 {
-                     student.Gender = item.Content?.ToString() ?? "";
-                 }
-             }
-
-             foreach (var datePicker in datePickers)
-             {
-                 if (datePicker.Header?.ToString() == "å‡ºç”Ÿæ—¥æœŸ")
-                 {
-                     student.BirthDate = datePicker.Date;
-                 }
-             }
-
-             return student;
-         }
-
-         private async void DeleteStudentButton_Click(object sender, RoutedEventArgs e)
-         {
-             if (_selectedStudent == null)
-             {
-                 ShowErrorDialog("æ“ä½œå¤±è´¥", "è¯·å…ˆé€‰æ‹©è¦åˆ é™¤çš„å­¦ç”Ÿï¼");
-                 return;
-             }
-
-             var result = await ShowConfirmDialog("ç¡®è®¤åˆ é™¤", $"ç¡®å®šè¦åˆ é™¤å­¦ç”Ÿ {_selectedStudent.Name} çš„ä¿¡æ¯å—ï¼Ÿæ­¤æ“ä½œä¸å¯æ’¤é”€ã€‚");
-             if (result)
-             {
-                 try
-                 {
-                     // TODO: ä»æ•°æ®åº“åˆ é™¤
-                     // await StudentService.DeleteStudentAsync(_selectedStudent.StudentId);
-                     
-                     Students.Remove(_selectedStudent);
-                     _selectedStudent = null;
-                     ClearStudentForm();
-                     
-                     ShowInfoDialog("åˆ é™¤æˆåŠŸ", "å­¦ç”Ÿä¿¡æ¯å·²åˆ é™¤ï¼");
-                 }
-                 catch (Exception ex)
-                 {
-                     ShowErrorDialog("åˆ é™¤å¤±è´¥", $"åˆ é™¤å­¦ç”Ÿä¿¡æ¯æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-                 }
-             }
-         }
-
-         private void ResetStudentButton_Click(object sender, RoutedEventArgs e)
-         {
-             if (_selectedStudent != null)
-             {
-                 LoadStudentDetails(_selectedStudent);
-             }
-             else
-             {
-                 ClearStudentForm();
-             }
-         }
-
-         private void RewardPunishmentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (RewardPunishmentListView.SelectedItem is RewardPunishmentRecord selectedRecord)
-             {
-                 _selectedRecord = selectedRecord;
-                 LoadRecordDetails(selectedRecord);
-             }
-         }
-
-         private void LoadRecordDetails(RewardPunishmentRecord record)
-         {
-             // æŸ¥æ‰¾è¯¦æƒ…é¢æ¿ä¸­çš„æ§ä»¶å¹¶å¡«å……æ•°æ®
-             var detailsPanel = FindRecordDetailsPanel();
-             if (detailsPanel != null)
-             {
-                 FillRecordDetailsForm(detailsPanel, record);
-             }
-         }
-
-         private void FillRecordDetailsForm(StackPanel panel, RewardPunishmentRecord record)
-          {
-              // æŸ¥æ‰¾å¹¶å¡«å……è¡¨å•æ§ä»¶
-              var textBoxes = new List<TextBox>();
-              var comboBoxes = new List<ComboBox>();
-              var datePickers = new List<DatePicker>();
-              
-              FindFormControls(panel, textBoxes, comboBoxes, datePickers);
-
-              // è¾…åŠ©æ–¹æ³•ï¼šé€’å½’æŸ¥æ‰¾è¡¨å•æ§ä»¶
-              void FindFormControls(DependencyObject parent, List<TextBox> textBoxList, List<ComboBox> comboBoxList, List<DatePicker> datePickerList)
-              {
-                  for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-                  {
-                      var child = VisualTreeHelper.GetChild(parent, i);
-                      
-                      if (child is TextBox textBox)
-                          textBoxList.Add(textBox);
-                      else if (child is ComboBox comboBox)
-                          comboBoxList.Add(comboBox);
-                      else if (child is DatePicker datePicker)
-                          datePickerList.Add(datePicker);
-                      
-                      FindFormControls(child, textBoxList, comboBoxList, datePickerList);
-                  }
-              }
-
-             // æ ¹æ®Headerå±æ€§å¡«å……æ•°æ®
-             foreach (var textBox in textBoxes)
-             {
-                 switch (textBox.Header?.ToString())
-                 {
-                     case "å­¦å·":
-                         textBox.Text = record.StudentId;
-                         break;
-                     case "å­¦ç”Ÿå§“å":
-                         textBox.Text = record.StudentName;
-                         break;
-                     case "å¥–æƒ©åç§°":
-                         textBox.Text = record.Name;
-                         break;
-                     case "é¢å‘æœºæ„":
-                         textBox.Text = record.Organization;
-                         break;
-                     case "è¯¦ç»†æè¿°":
-                         textBox.Text = record.Description;
-                         break;
-                 }
-             }
-
-             // å¡«å……ä¸‹æ‹‰æ¡†
-             foreach (var comboBox in comboBoxes)
-             {
-                 if (comboBox.Header?.ToString() == "è®°å½•ç±»å‹")
-                 {
-                     for (int i = 0; i < comboBox.Items.Count; i++)
-                     {
-                         if (comboBox.Items[i] is ComboBoxItem item && item.Content?.ToString() == record.Type)
-                         {
-                             comboBox.SelectedIndex = i;
-                             break;
-                         }
-                     }
-                 }
-                 else if (comboBox.Header?.ToString() == "è®°å½•çº§åˆ«")
-                 {
-                     for (int i = 0; i < comboBox.Items.Count; i++)
-                     {
-                         if (comboBox.Items[i] is ComboBoxItem item && item.Content?.ToString() == record.Level)
-                         {
-                             comboBox.SelectedIndex = i;
-                             break;
-                         }
-                     }
-                 }
-             }
-
-             // å¡«å……æ—¥æœŸ
-             foreach (var datePicker in datePickers)
-             {
-                 if (datePicker.Header?.ToString() == "è·å¾—æ—¶é—´")
-                 {
-                     datePicker.Date = record.Date ?? DateTimeOffset.Now;
-                 }
-             }
-         }
-
-         #endregion
-
-         #region æˆç»©å½•å…¥æ ‡ç­¾é¡µäº‹ä»¶å¤„ç†
-
-         private async void ImportGradesButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var picker = new FileOpenPicker();
-                 picker.FileTypeFilter.Add(".xlsx");
-                 picker.FileTypeFilter.Add(".xls");
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSingleFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: å®ç°æˆç»©Excelæ–‡ä»¶è§£æé€»è¾‘
-                     // var grades = await ExcelImportService.ImportGradesFromExcel(file);
-                     // foreach (var grade in grades)
-                     // {
-                     //     Grades.Add(grade);
-                     // }
-                     
-                     ShowInfoDialog("å¯¼å…¥æˆåŠŸ", "æˆç»©æ•°æ®å¯¼å…¥å®Œæˆï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("å¯¼å…¥å¤±è´¥", $"æˆç»©å¯¼å…¥æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private void FilterGradesBySemester(string semester)
-         {
-             // TODO: å®ç°æŒ‰å­¦æœŸç­›é€‰æˆç»©çš„é€»è¾‘
-             // var filteredGrades = await GradeService.GetGradesBySemesterAsync(semester);
-             // Grades.Clear();
-             // foreach (var grade in filteredGrades)
-             // {
-             //     Grades.Add(grade);
-             // }
-         }
-
-         private void FilterGradesByMajor(string major)
-         {
-             // TODO: å®ç°æŒ‰ä¸“ä¸šç­›é€‰æˆç»©çš„é€»è¾‘
-             // var filteredGrades = await GradeService.GetGradesByMajorAsync(major);
-             // Grades.Clear();
-             // foreach (var grade in filteredGrades)
-             // {
-             //     Grades.Add(grade);
-             // }
-         }
-
-         #endregion
-
-         #region å¥–æƒ©è®°å½•æ ‡ç­¾é¡µäº‹ä»¶å¤„ç†
-
-         private void AddRecordButton_Click(object sender, RoutedEventArgs e)
-         {
-             // æ¸…ç©ºè¡¨å•å¹¶å‡†å¤‡æ·»åŠ æ–°è®°å½•
-             _selectedRecord = null;
-             ClearRecordForm();
-         }
-
-         private async void ImportRecordsButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var picker = new FileOpenPicker();
-                 picker.FileTypeFilter.Add(".xlsx");
-                 picker.FileTypeFilter.Add(".xls");
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSingleFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: å®ç°å¥–æƒ©è®°å½•Excelæ–‡ä»¶è§£æé€»è¾‘
-                     // var records = await ExcelImportService.ImportRecordsFromExcel(file);
-                     // foreach (var record in records)
-                     // {
-                     //     Records.Add(record);
-                     // }
-                     
-                     ShowInfoDialog("å¯¼å…¥æˆåŠŸ", "å¥–æƒ©è®°å½•å¯¼å…¥å®Œæˆï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("å¯¼å…¥å¤±è´¥", $"å¥–æƒ©è®°å½•å¯¼å…¥æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private async void SaveRecordButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var record = GetRecordFromForm();
-                 if (record == null) return;
-
-                 if (_selectedRecord == null)
-                 {
-                     // æ–°å¢è®°å½•
-                     // TODO: ä¿å­˜åˆ°æ•°æ®åº“
-                     // await RecordService.AddRecordAsync(record);
-                     
-                     Records.Add(record);
-                     ShowInfoDialog("ä¿å­˜æˆåŠŸ", "å¥–æƒ©è®°å½•å·²æ·»åŠ ï¼");
-                 }
-                 else
-                 {
-                     // æ›´æ–°è®°å½•
-                     // TODO: æ›´æ–°æ•°æ®åº“
-                     // await RecordService.UpdateRecordAsync(record);
-                     
-                     var index = Records.IndexOf(_selectedRecord);
-                     if (index >= 0)
-                     {
-                         Records[index] = record;
-                     }
-                     ShowInfoDialog("ä¿å­˜æˆåŠŸ", "å¥–æƒ©è®°å½•å·²æ›´æ–°ï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("ä¿å­˜å¤±è´¥", $"ä¿å­˜å¥–æƒ©è®°å½•æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private RewardPunishmentRecord? GetRecordFromForm()
-         {
-             var textBoxes = new List<TextBox>();
-             var comboBoxes = new List<ComboBox>();
-             var datePickers = new List<DatePicker>();
-             
-             // æŸ¥æ‰¾å¥–æƒ©è®°å½•è¡¨å•æ§ä»¶
-             var recordPanel = FindRecordDetailsPanel();
-             if (recordPanel != null)
-             {
-                 FindFormControls(recordPanel, textBoxes, comboBoxes, datePickers);
-             }
-
-             var record = new RewardPunishmentRecord();
-             
-             foreach (var textBox in textBoxes)
-             {
-                 switch (textBox.Header?.ToString())
-                 {
-                     case "å­¦å·":
-                         if (string.IsNullOrWhiteSpace(textBox.Text))
-                         {
-                             ShowErrorDialog("éªŒè¯å¤±è´¥", "å­¦å·ä¸èƒ½ä¸ºç©ºï¼");
-                             return null;
-                         }
-                         record.StudentId = textBox.Text.Trim();
-                         break;
-                     case "å­¦ç”Ÿå§“å":
-                         if (string.IsNullOrWhiteSpace(textBox.Text))
-                         {
-                             ShowErrorDialog("éªŒè¯å¤±è´¥", "å­¦ç”Ÿå§“åä¸èƒ½ä¸ºç©ºï¼");
-                             return null;
-                         }
-                         record.StudentName = textBox.Text.Trim();
-                         break;
-                     case "å¥–æƒ©åç§°":
-                         if (string.IsNullOrWhiteSpace(textBox.Text))
-                         {
-                             ShowErrorDialog("éªŒè¯å¤±è´¥", "å¥–æƒ©åç§°ä¸èƒ½ä¸ºç©ºï¼");
-                             return null;
-                         }
-                         record.Name = textBox.Text.Trim();
-                         break;
-                     case "é¢å‘æœºæ„":
-                         record.Organization = textBox.Text.Trim();
-                         break;
-                     case "è¯¦ç»†æè¿°":
-                         record.Description = textBox.Text.Trim();
-                         break;
-                 }
-             }
-
-             foreach (var comboBox in comboBoxes)
-             {
-                 if (comboBox.Header?.ToString() == "è®°å½•ç±»å‹" && comboBox.SelectedItem is ComboBoxItem typeItem)
-                 {
-                     record.Type = typeItem.Content?.ToString() ?? "";
-                 }
-                 else if (comboBox.Header?.ToString() == "è®°å½•çº§åˆ«" && comboBox.SelectedItem is ComboBoxItem levelItem)
-                 {
-                     record.Level = levelItem.Content?.ToString() ?? "";
-                 }
-             }
-
-             foreach (var datePicker in datePickers)
-             {
-                 if (datePicker.Header?.ToString() == "è·å¾—æ—¶é—´")
-                 {
-                     record.Date = datePicker.Date;
-                 }
-             }
-
-             return record;
-         }
-
-         private StackPanel? FindRecordDetailsPanel()
-         {
-             // é€’å½’æŸ¥æ‰¾å¥–æƒ©è®°å½•è¯¦æƒ…é¢æ¿
-             return FindChildOfType<StackPanel>(this, "å¥–æƒ©è®°å½•è¯¦æƒ…");
-         }
-
-         private void ClearRecordForm()
-         {
-             var textBoxes = new List<TextBox>();
-             var comboBoxes = new List<ComboBox>();
-             var datePickers = new List<DatePicker>();
-             
-             var recordPanel = FindRecordDetailsPanel();
-             if (recordPanel != null)
-             {
-                 FindFormControls(recordPanel, textBoxes, comboBoxes, datePickers);
-
-                 foreach (var textBox in textBoxes)
-                 {
-                     textBox.Text = string.Empty;
-                 }
-                 
-                 foreach (var comboBox in comboBoxes)
-                 {
-                     comboBox.SelectedIndex = -1;
-                 }
-                 
-                 foreach (var datePicker in datePickers)
-                 {
-                     datePicker.Date = DateTimeOffset.Now;
-                 }
-             }
-         }
-
-         private async void DeleteRecordButton_Click(object sender, RoutedEventArgs e)
-         {
-             if (_selectedRecord == null)
-             {
-                 ShowErrorDialog("æ“ä½œå¤±è´¥", "è¯·å…ˆé€‰æ‹©è¦åˆ é™¤çš„è®°å½•ï¼");
-                 return;
-             }
-
-             var result = await ShowConfirmDialog("ç¡®è®¤åˆ é™¤", $"ç¡®å®šè¦åˆ é™¤ {_selectedRecord.StudentName} çš„ {_selectedRecord.Name} è®°å½•å—ï¼Ÿæ­¤æ“ä½œä¸å¯æ’¤é”€ã€‚");
-             if (result)
-             {
-                 try
-                 {
-                     // TODO: ä»æ•°æ®åº“åˆ é™¤
-                     // await RecordService.DeleteRecordAsync(_selectedRecord.Id);
-                     
-                     Records.Remove(_selectedRecord);
-                     _selectedRecord = null;
-                     ClearRecordForm();
-                     
-                     ShowInfoDialog("åˆ é™¤æˆåŠŸ", "å¥–æƒ©è®°å½•å·²åˆ é™¤ï¼");
-                 }
-                 catch (Exception ex)
-                 {
-                     ShowErrorDialog("åˆ é™¤å¤±è´¥", $"åˆ é™¤å¥–æƒ©è®°å½•æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-                 }
-             }
-         }
-
-         private void ClearRecordButton_Click(object sender, RoutedEventArgs e)
-         {
-             ClearRecordForm();
-         }
-
-         private async void SelectFileButton_Click(object sender, RoutedEventArgs e)
-         {
-             try
-             {
-                 var picker = new FileOpenPicker();
-                 picker.FileTypeFilter.Add(".pdf");
-                 picker.FileTypeFilter.Add(".jpg");
-                 picker.FileTypeFilter.Add(".jpeg");
-                 picker.FileTypeFilter.Add(".png");
-                 picker.FileTypeFilter.Add(".doc");
-                 picker.FileTypeFilter.Add(".docx");
-                 
-                 var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
-                 WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-                 
-                 var file = await picker.PickSingleFileAsync();
-                 if (file != null)
-                 {
-                     // TODO: å¤„ç†è¯ä¹¦æ–‡ä»¶ä¸Šä¼ 
-                     // var uploadedPath = await FileUploadService.UploadCertificateAsync(file);
-                     // if (_selectedRecord != null)
-                     // {
-                     //     _selectedRecord.CertificateFile = uploadedPath;
-                     // }
-                     
-                     ShowInfoDialog("ä¸Šä¼ æˆåŠŸ", $"è¯ä¹¦æ–‡ä»¶ {file.Name} å·²é€‰æ‹©ï¼");
-                 }
-             }
-             catch (Exception ex)
-             {
-                 ShowErrorDialog("æ–‡ä»¶é€‰æ‹©å¤±è´¥", $"é€‰æ‹©è¯ä¹¦æ–‡ä»¶æ—¶å‘ç”Ÿé”™è¯¯ï¼š{ex.Message}");
-             }
-         }
-
-         private void FilterRecordsByType(string type)
-         {
-             // TODO: å®ç°æŒ‰è®°å½•ç±»å‹ç­›é€‰çš„é€»è¾‘
-             // var filteredRecords = await RecordService.GetRecordsByTypeAsync(type);
-             // Records.Clear();
-             // foreach (var record in filteredRecords)
-             // {
-             //     Records.Add(record);
-             // }
-         }
-
-         private void FilterRecordsByLevel(string level)
-         {
-             // TODO: å®ç°æŒ‰è®°å½•çº§åˆ«ç­›é€‰çš„é€»è¾‘
-             // var filteredRecords = await RecordService.GetRecordsByLevelAsync(level);
-             // Records.Clear();
-             // foreach (var record in filteredRecords)
-             // {
-             //     Records.Add(record);
-             // }
-         }
-
-         #endregion
-
-         #region ComboBoxäº‹ä»¶å¤„ç†
-
-         private void SemesterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-             {
-                 var semester = selectedItem.Content?.ToString();
-                 if (!string.IsNullOrEmpty(semester))
-                 {
-                     FilterGradesBySemester(semester);
-                 }
-             }
-         }
-
-         private void MajorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-             {
-                 var major = selectedItem.Content?.ToString();
-                 if (!string.IsNullOrEmpty(major))
-                 {
-                     FilterGradesByMajor(major);
-                 }
-             }
-         }
-
-         private void RecordTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-             {
-                 var recordType = selectedItem.Content?.ToString();
-                 if (!string.IsNullOrEmpty(recordType))
-                 {
-                     FilterRecordsByType(recordType);
-                 }
-             }
-         }
-
-         private void RecordLevelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-         {
-             if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
-             {
-                 var recordLevel = selectedItem.Content?.ToString();
-                 if (!string.IsNullOrEmpty(recordLevel))
-                 {
-                     FilterRecordsByLevel(recordLevel);
-                 }
-             }
-         }
-
-         #endregion
-
-         #region é€šç”¨å¯¹è¯æ¡†å’Œè¾…åŠ©æ–¹æ³•
-
-         private async void ShowInfoDialog(string title, string message)
-         {
-             var dialog = new ContentDialog()
-             {
-                 Title = title,
-                 Content = message,
-                 CloseButtonText = "ç¡®å®š",
-                 XamlRoot = this.XamlRoot
-             };
-             await dialog.ShowAsync();
-         }
-
-         private async void ShowErrorDialog(string title, string message)
-         {
-             var dialog = new ContentDialog()
-             {
-                 Title = title,
-                 Content = message,
-                 CloseButtonText = "ç¡®å®š",
-                 XamlRoot = this.XamlRoot
-             };
-             await dialog.ShowAsync();
-         }
-
-         private async Task<bool> ShowConfirmDialog(string title, string message)
-         {
-             var dialog = new ContentDialog()
-             {
-                 Title = title,
-                 Content = message,
-                 PrimaryButtonText = "ç¡®å®š",
-                 CloseButtonText = "å–æ¶ˆ",
-                 XamlRoot = this.XamlRoot
-             };
-             
-             var result = await dialog.ShowAsync();
-             return result == ContentDialogResult.Primary;
-         }
-
-         private void SearchStudents(string searchText)
-         {
-             if (string.IsNullOrWhiteSpace(searchText))
-             {
-                 // TODO: æ˜¾ç¤ºæ‰€æœ‰å­¦ç”Ÿ
-                 // LoadInitialData();
-                 return;
-             }
-
-             // TODO: å®ç°å­¦ç”Ÿæœç´¢é€»è¾‘
-             // var filteredStudents = await StudentService.SearchStudentsAsync(searchText);
-             // Students.Clear();
-             // foreach (var student in filteredStudents)
-             // {
-             //     Students.Add(student);
-             // }
-         }
-
-         #endregion
-     }
-
-    // è½¬æ¢å™¨ç±»
+            // ÁÙÊ±Ìí¼ÓÊ¾Àı½±³Í¼ÇÂ¼
+            Records.Add(new RewardPunishmentRecord
+            {
+                StudentId = "2021001",
+                StudentName = "ÕÅÈı",
+                Type = "½±Àø",
+                Name = "ÈıºÃÑ§Éú",
+                Level = "Ğ£¼¶",
+                Date = DateTimeOffset.Parse("2023-12-01")
+            });
+        }
+
+        #region »ù´¡ĞÅÏ¢±êÇ©Ò³ÊÂ¼ş´¦Àí
+
+        private void StudentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (StudentListView.SelectedItem is StudentInfo selectedStudent)
+            {
+                _selectedStudent = selectedStudent;
+                LoadStudentDetails(selectedStudent);
+            }
+        }
+
+        private void LoadStudentDetails(StudentInfo student)
+        {
+            // ²éÕÒÏêÇéÃæ°åÖĞµÄ¿Ø¼ş²¢Ìî³äÊı¾İ
+            var detailsPanel = FindDetailsPanel();
+            if (detailsPanel != null)
+            {
+                FillStudentDetailsForm(detailsPanel, student);
+            }
+        }
+
+        private StackPanel? FindDetailsPanel()
+        {
+            // µİ¹é²éÕÒÏêÇéÃæ°å
+            return FindChildOfType<StackPanel>(this, "Ñ§ÉúÏêÏ¸ĞÅÏ¢");
+        }
+
+        private T? FindChildOfType<T>(DependencyObject parent, string identifier = "") where T : DependencyObject
+        {
+            var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is T target)
+                {
+                    if (string.IsNullOrEmpty(identifier) ||
+                        (target is TextBlock tb && tb.Text == identifier))
+                        return target;
+                }
+                var result = FindChildOfType<T>(child, identifier);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
+        private void FillStudentDetailsForm(StackPanel panel, StudentInfo student)
+        {
+            // ²éÕÒ²¢Ìî³ä±íµ¥¿Ø¼ş
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            FindFormControls(panel, textBoxes, comboBoxes, datePickers);
+
+            // ¸ù¾İHeaderÊôĞÔÌî³äÊı¾İ
+            foreach (var textBox in textBoxes)
+            {
+                switch (textBox.Header?.ToString())
+                {
+                    case "Ñ§ºÅ":
+                        textBox.Text = student.StudentId;
+                        break;
+                    case "ĞÕÃû":
+                        textBox.Text = student.Name;
+                        break;
+                    case "Éí·İÖ¤ºÅ":
+                        textBox.Text = student.IdCard;
+                        break;
+                    case "×¨Òµ":
+                        textBox.Text = student.Major;
+                        break;
+                    case "°à¼¶":
+                        textBox.Text = student.Class;
+                        break;
+                    case "ÁªÏµµç»°":
+                        textBox.Text = student.Phone;
+                        break;
+                    case "ÓÊÏäµØÖ·":
+                        textBox.Text = student.Email;
+                        break;
+                    case "¼ÒÍ¥×¡Ö·":
+                        textBox.Text = student.Address;
+                        break;
+                    case "¼Ò³¤ĞÕÃû":
+                        textBox.Text = student.ParentName;
+                        break;
+                    case "¼Ò³¤ÁªÏµ·½Ê½":
+                        textBox.Text = student.ParentPhone;
+                        break;
+                }
+            }
+
+            // Ìî³äĞÔ±ğÏÂÀ­¿ò
+            foreach (var comboBox in comboBoxes)
+            {
+                if (comboBox.Header?.ToString() == "ĞÔ±ğ")
+                {
+                    comboBox.SelectedIndex = student.Gender == "ÄĞ" ? 0 : 1;
+                }
+            }
+
+            // Ìî³ä³öÉúÈÕÆÚ
+            foreach (var datePicker in datePickers)
+            {
+                if (datePicker.Header?.ToString() == "³öÉúÈÕÆÚ")
+                {
+                    datePicker.Date = student.BirthDate ?? DateTimeOffset.Now;
+                }
+            }
+        }
+
+        private void FindFormControls(DependencyObject parent, List<TextBox> textBoxes, List<ComboBox> comboBoxes, List<DatePicker> datePickers)
+        {
+            var childCount = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetChild(parent, i);
+
+                if (child is TextBox textBox)
+                    textBoxes.Add(textBox);
+                else if (child is ComboBox comboBox)
+                    comboBoxes.Add(comboBox);
+                else if (child is DatePicker datePicker)
+                    datePickers.Add(datePicker);
+
+                FindFormControls(child, textBoxes, comboBoxes, datePickers);
+            }
+        }
+
+        private async void ImportMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuItem)
+            {
+                switch (menuItem.Text)
+                {
+                    case "´ÓExcelµ¼Èë":
+                        await ImportFromExcel();
+                        break;
+                    case "´Ó½ÌÎñÏµÍ³µ¼Èë":
+                        await ImportFromEducationSystem();
+                        break;
+                    case "ÏÂÔØÄ£°å":
+                        await DownloadTemplate();
+                        break;
+                }
+            }
+        }
+
+        private async Task ImportFromExcel()
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".xlsx");
+                picker.FileTypeFilter.Add(".xls");
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // Ê¹ÓÃ ExcelImportService µ¼ÈëÑ§ÉúĞÅÏ¢
+                    var students = await ExcelImportService.ImportStudentsFromExcelAsync(file);
+                    foreach (var student in students)
+                    {
+                        var studentInfo = new StudentInfo
+                        {
+                            StudentId = student.StudentId,
+                            Name = student.Name,
+                            Gender = student.Gender == "M" ? "ÄĞ" : "Å®",
+                            Major = student.Major ?? "",
+                            Status = "Î´Íê³É"
+                        };
+                        Students.Add(studentInfo);
+                    }
+
+                    ShowInfoDialog("µ¼Èë³É¹¦", $"ExcelÎÄ¼şµ¼ÈëÍê³É£¡¹²µ¼Èë {students.Count} ÌõÑ§Éú¼ÇÂ¼¡£");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("µ¼ÈëÊ§°Ü", $"Excelµ¼ÈëÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private async Task ImportFromEducationSystem()
+        {
+            try
+            {
+                // TODO: ÊµÏÖ´Ó½ÌÎñÏµÍ³µ¼ÈëµÄÂß¼­
+                // var students = await EducationSystemService.ImportStudentsAsync();
+                // foreach (var student in students)
+                // {
+                //     Students.Add(student);
+                // }
+
+                ShowInfoDialog("µ¼Èë³É¹¦", "´Ó½ÌÎñÏµÍ³µ¼ÈëÍê³É£¡");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("µ¼ÈëÊ§°Ü", $"´Ó½ÌÎñÏµÍ³µ¼ÈëÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private async Task DownloadTemplate()
+        {
+            try
+            {
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add("ExcelÎÄ¼ş", new List<string> { ".xlsx" });
+                picker.SuggestedFileName = "Ñ§ÉúĞÅÏ¢µ¼ÈëÄ£°å";
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    // Ê¹ÓÃ ExcelTemplateService Éú³ÉÑ§ÉúĞÅÏ¢Ä£°å
+                    await ExcelTemplateService.GenerateStudentTemplate(file);
+
+                    ShowInfoDialog("ÏÂÔØ³É¹¦", "Ä£°åÎÄ¼şÒÑ±£´æ£¡");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("ÏÂÔØÊ§°Ü", $"Ä£°åÏÂÔØÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private void AddStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Çå¿Õ±íµ¥²¢×¼±¸Ìí¼ÓĞÂÑ§Éú
+            _selectedStudent = null;
+            ClearStudentForm();
+
+            // Éú³ÉĞÂµÄÑ§ºÅ
+            var newStudentId = GenerateNewStudentId();
+            var textBoxes = new List<TextBox>();
+            FindFormControls(this, textBoxes, new List<ComboBox>(), new List<DatePicker>());
+
+            foreach (var textBox in textBoxes)
+            {
+                if (textBox.Header?.ToString() == "Ñ§ºÅ")
+                {
+                    textBox.Text = newStudentId;
+                    break;
+                }
+            }
+        }
+
+        private string GenerateNewStudentId()
+        {
+            // TODO: ÊµÏÖÑ§ºÅÉú³ÉÂß¼­
+            // return StudentService.GenerateNewStudentId();
+
+            // ÁÙÊ±ÊµÏÖ£º»ùÓÚµ±Ç°Äê·İºÍĞòºÅ
+            var year = DateTime.Now.Year;
+            var maxId = Students.Where(s => s.StudentId.StartsWith(year.ToString()))
+                              .Select(s => s.StudentId)
+                              .DefaultIfEmpty($"{year}000")
+                              .Max();
+
+            if (int.TryParse(maxId.Substring(4), out int lastNumber))
+            {
+                return $"{year}{(lastNumber + 1):D3}";
+            }
+            return $"{year}001";
+        }
+
+        private void ClearStudentForm()
+        {
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            FindFormControls(this, textBoxes, comboBoxes, datePickers);
+
+            foreach (var textBox in textBoxes)
+            {
+                textBox.Text = string.Empty;
+            }
+
+            foreach (var comboBox in comboBoxes)
+            {
+                comboBox.SelectedIndex = -1;
+            }
+
+            foreach (var datePicker in datePickers)
+            {
+                datePicker.Date = DateTimeOffset.Now;
+            }
+        }
+
+        private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add("ExcelÎÄ¼ş", new List<string> { ".xlsx" });
+                picker.SuggestedFileName = $"Ñ§ÉúĞÅÏ¢_{DateTime.Now:yyyyMMdd}";
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    // ×ª»» StudentInfo µ½ Student Ä£ĞÍ
+                    var studentsToExport = Students.Select(s => new Student
+                    {
+                        StudentId = s.StudentId,
+                        Name = s.Name,
+                        Gender = s.Gender == "ÄĞ" ? "M" : "F",
+                        Major = s.Major,
+                        GraduationYear = DateTime.Now.Year // ¿ÉÒÔ¸ù¾İĞèÒªµ÷Õû
+                    }).ToList();
+
+                    // Ê¹ÓÃ ExcelExportService µ¼³öÑ§ÉúÊı¾İ
+                    await ExcelExportService.ExportStudentsToExcelAsync(studentsToExport, file);
+
+                    ShowInfoDialog("µ¼³ö³É¹¦", $"Ñ§ÉúÊı¾İÒÑµ¼³öµ½ExcelÎÄ¼ş£¡¹²µ¼³ö {studentsToExport.Count} Ìõ¼ÇÂ¼¡£");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("µ¼³öÊ§°Ü", $"Êı¾İµ¼³öÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private async void SaveStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var student = GetStudentFromForm();
+                if (student == null) return;
+
+                if (_selectedStudent == null)
+                {
+                    // ĞÂÔöÑ§Éú
+                    // TODO: ±£´æµ½Êı¾İ¿â
+                    // await StudentService.AddStudentAsync(student);
+
+                    Students.Add(student);
+                    ShowInfoDialog("±£´æ³É¹¦", "Ñ§ÉúĞÅÏ¢ÒÑÌí¼Ó£¡");
+                }
+                else
+                {
+                    // ¸üĞÂÑ§ÉúĞÅÏ¢
+                    // TODO: ¸üĞÂÊı¾İ¿â
+                    // await StudentService.UpdateStudentAsync(student);
+
+                    var index = Students.IndexOf(_selectedStudent);
+                    if (index >= 0)
+                    {
+                        Students[index] = student;
+                    }
+                    ShowInfoDialog("±£´æ³É¹¦", "Ñ§ÉúĞÅÏ¢ÒÑ¸üĞÂ£¡");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("±£´æÊ§°Ü", $"±£´æÑ§ÉúĞÅÏ¢Ê±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private StudentInfo? GetStudentFromForm()
+        {
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            FindFormControls(this, textBoxes, comboBoxes, datePickers);
+
+            var student = new StudentInfo();
+
+            foreach (var textBox in textBoxes)
+            {
+                switch (textBox.Header?.ToString())
+                {
+                    case "Ñ§ºÅ":
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            ShowErrorDialog("ÑéÖ¤Ê§°Ü", "Ñ§ºÅ²»ÄÜÎª¿Õ£¡");
+                            return null;
+                        }
+                        student.StudentId = textBox.Text.Trim();
+                        break;
+                    case "ĞÕÃû":
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            ShowErrorDialog("ÑéÖ¤Ê§°Ü", "ĞÕÃû²»ÄÜÎª¿Õ£¡");
+                            return null;
+                        }
+                        student.Name = textBox.Text.Trim();
+                        break;
+                    case "Éí·İÖ¤ºÅ":
+                        student.IdCard = textBox.Text.Trim();
+                        break;
+                    case "×¨Òµ":
+                        student.Major = textBox.Text.Trim();
+                        break;
+                    case "°à¼¶":
+                        student.Class = textBox.Text.Trim();
+                        break;
+                    case "ÁªÏµµç»°":
+                        student.Phone = textBox.Text.Trim();
+                        break;
+                    case "ÓÊÏäµØÖ·":
+                        student.Email = textBox.Text.Trim();
+                        break;
+                    case "¼ÒÍ¥×¡Ö·":
+                        student.Address = textBox.Text.Trim();
+                        break;
+                    case "¼Ò³¤ĞÕÃû":
+                        student.ParentName = textBox.Text.Trim();
+                        break;
+                    case "¼Ò³¤ÁªÏµ·½Ê½":
+                        student.ParentPhone = textBox.Text.Trim();
+                        break;
+                }
+            }
+
+            foreach (var comboBox in comboBoxes)
+            {
+                if (comboBox.Header?.ToString() == "ĞÔ±ğ" && comboBox.SelectedItem is ComboBoxItem item)
+                {
+                    student.Gender = item.Content?.ToString() ?? "";
+                }
+            }
+
+            foreach (var datePicker in datePickers)
+            {
+                if (datePicker.Header?.ToString() == "³öÉúÈÕÆÚ")
+                {
+                    student.BirthDate = datePicker.Date;
+                }
+            }
+
+            return student;
+        }
+
+        private async void DeleteStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedStudent == null)
+            {
+                ShowErrorDialog("²Ù×÷Ê§°Ü", "ÇëÏÈÑ¡ÔñÒªÉ¾³ıµÄÑ§Éú£¡");
+                return;
+            }
+
+            var result = await ShowConfirmDialog("È·ÈÏÉ¾³ı", $"È·¶¨ÒªÉ¾³ıÑ§Éú {_selectedStudent.Name} µÄĞÅÏ¢Âğ£¿´Ë²Ù×÷²»¿É³·Ïú¡£");
+            if (result)
+            {
+                try
+                {
+                    // TODO: ´ÓÊı¾İ¿âÉ¾³ı
+                    // await StudentService.DeleteStudentAsync(_selectedStudent.StudentId);
+
+                    Students.Remove(_selectedStudent);
+                    _selectedStudent = null;
+                    ClearStudentForm();
+
+                    ShowInfoDialog("É¾³ı³É¹¦", "Ñ§ÉúĞÅÏ¢ÒÑÉ¾³ı£¡");
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorDialog("É¾³ıÊ§°Ü", $"É¾³ıÑ§ÉúĞÅÏ¢Ê±·¢Éú´íÎó£º{ex.Message}");
+                }
+            }
+        }
+
+        private void ResetStudentButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedStudent != null)
+            {
+                LoadStudentDetails(_selectedStudent);
+            }
+            else
+            {
+                ClearStudentForm();
+            }
+        }
+
+        private void RewardPunishmentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RewardPunishmentListView.SelectedItem is RewardPunishmentRecord selectedRecord)
+            {
+                _selectedRecord = selectedRecord;
+                LoadRecordDetails(selectedRecord);
+            }
+        }
+
+        private void LoadRecordDetails(RewardPunishmentRecord record)
+        {
+            // ²éÕÒÏêÇéÃæ°åÖĞµÄ¿Ø¼ş²¢Ìî³äÊı¾İ
+            var detailsPanel = FindRecordDetailsPanel();
+            if (detailsPanel != null)
+            {
+                FillRecordDetailsForm(detailsPanel, record);
+            }
+        }
+
+        private void FillRecordDetailsForm(StackPanel panel, RewardPunishmentRecord record)
+        {
+            // ²éÕÒ²¢Ìî³ä±íµ¥¿Ø¼ş
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            FindFormControls(panel, textBoxes, comboBoxes, datePickers);
+
+            // ¸¨Öú·½·¨£ºµİ¹é²éÕÒ±íµ¥¿Ø¼ş
+            void FindFormControls(DependencyObject parent, List<TextBox> textBoxList, List<ComboBox> comboBoxList, List<DatePicker> datePickerList)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+
+                    if (child is TextBox textBox)
+                        textBoxList.Add(textBox);
+                    else if (child is ComboBox comboBox)
+                        comboBoxList.Add(comboBox);
+                    else if (child is DatePicker datePicker)
+                        datePickerList.Add(datePicker);
+
+                    FindFormControls(child, textBoxList, comboBoxList, datePickerList);
+                }
+            }
+
+            // ¸ù¾İHeaderÊôĞÔÌî³äÊı¾İ
+            foreach (var textBox in textBoxes)
+            {
+                switch (textBox.Header?.ToString())
+                {
+                    case "Ñ§ºÅ":
+                        textBox.Text = record.StudentId;
+                        break;
+                    case "Ñ§ÉúĞÕÃû":
+                        textBox.Text = record.StudentName;
+                        break;
+                    case "½±³ÍÃû³Æ":
+                        textBox.Text = record.Name;
+                        break;
+                    case "°ä·¢»ú¹¹":
+                        textBox.Text = record.Organization;
+                        break;
+                    case "ÏêÏ¸ÃèÊö":
+                        textBox.Text = record.Description;
+                        break;
+                }
+            }
+
+            // Ìî³äÏÂÀ­¿ò
+            foreach (var comboBox in comboBoxes)
+            {
+                if (comboBox.Header?.ToString() == "¼ÇÂ¼ÀàĞÍ")
+                {
+                    for (int i = 0; i < comboBox.Items.Count; i++)
+                    {
+                        if (comboBox.Items[i] is ComboBoxItem item && item.Content?.ToString() == record.Type)
+                        {
+                            comboBox.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                else if (comboBox.Header?.ToString() == "¼ÇÂ¼¼¶±ğ")
+                {
+                    for (int i = 0; i < comboBox.Items.Count; i++)
+                    {
+                        if (comboBox.Items[i] is ComboBoxItem item && item.Content?.ToString() == record.Level)
+                        {
+                            comboBox.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Ìî³äÈÕÆÚ
+            foreach (var datePicker in datePickers)
+            {
+                if (datePicker.Header?.ToString() == "»ñµÃÊ±¼ä")
+                {
+                    datePicker.Date = record.Date ?? DateTimeOffset.Now;
+                }
+            }
+        }
+
+        #endregion
+
+        #region ³É¼¨Â¼Èë±êÇ©Ò³ÊÂ¼ş´¦Àí
+
+        private async void ImportGradesButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".xlsx");
+                picker.FileTypeFilter.Add(".xls");
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // Ê¹ÓÃ ExcelImportService µ¼Èë³É¼¨Êı¾İ
+                    var scores = await ExcelImportService.ImportGradesFromExcelAsync(file);
+
+                    // ½« StudentScore ×ª»»Îª GradeInfo
+                    foreach (var score in scores)
+                    {
+                        try
+                        {
+                            var gradeDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(score.Score);
+                            if (gradeDict != null)
+                            {
+                                foreach (var grade in gradeDict)
+                                {
+                                    if (double.TryParse(grade.Value, out double scoreValue))
+                                    {
+                                        var gradeInfo = new GradeInfo
+                                        {
+                                            StudentId = score.StudentUuid,
+                                            StudentName = GetStudentNameById(score.StudentUuid),
+                                            CourseName = grade.Key,
+                                            Score = scoreValue,
+                                            Semester = score.Term,
+                                            GradeType = "µ¼Èë³É¼¨",
+                                            Credits = 3.0, // Ä¬ÈÏÑ§·Ö£¬¿É¸ù¾İĞèÒªµ÷Õû
+                                            GPA = CalculateGPA(scoreValue),
+                                            Remarks = ""
+                                        };
+                                        Grades.Add(gradeInfo);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // ¼ÇÂ¼½âÎö´íÎóµ«¼ÌĞø´¦ÀíÆäËûÊı¾İ
+                            System.Diagnostics.Debug.WriteLine($"½âÎö³É¼¨Êı¾İÊ±³ö´í: {ex.Message}");
+                        }
+                    }
+
+                    ShowInfoDialog("µ¼Èë³É¹¦", $"³É¼¨Êı¾İµ¼ÈëÍê³É£¡¹²µ¼Èë {scores.Count} Ìõ¼ÇÂ¼¡£");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("µ¼ÈëÊ§°Ü", $"³É¼¨µ¼ÈëÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private string GetStudentNameById(string studentId)
+        {
+            var student = Students.FirstOrDefault(s => s.StudentId == studentId);
+            return student?.Name ?? "Î´ÖªÑ§Éú";
+        }
+
+        private double CalculateGPA(double score)
+        {
+            // ¼òµ¥µÄGPA¼ÆËãÂß¼­
+            if (score >= 90) return 4.0;
+            if (score >= 80) return 3.0;
+            if (score >= 70) return 2.0;
+            if (score >= 60) return 1.0;
+            return 0.0;
+        }
+
+        private void FilterGradesBySemester(string semester)
+        {
+            // TODO: ÊµÏÖ°´Ñ§ÆÚÉ¸Ñ¡³É¼¨µÄÂß¼­
+            // var filteredGrades = await GradeService.GetGradesBySemesterAsync(semester);
+            // Grades.Clear();
+            // foreach (var grade in filteredGrades)
+            // {
+            //     Grades.Add(grade);
+            // }
+        }
+
+        private void FilterGradesByMajor(string major)
+        {
+            // TODO: ÊµÏÖ°´×¨ÒµÉ¸Ñ¡³É¼¨µÄÂß¼­
+            // var filteredGrades = await GradeService.GetGradesByMajorAsync(major);
+            // Grades.Clear();
+            // foreach (var grade in filteredGrades)
+            // {
+            //     Grades.Add(grade);
+            // }
+        }
+
+        #endregion
+
+        #region ½±³Í¼ÇÂ¼±êÇ©Ò³ÊÂ¼ş´¦Àí
+
+        private void AddRecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Çå¿Õ±íµ¥²¢×¼±¸Ìí¼ÓĞÂ¼ÇÂ¼
+            _selectedRecord = null;
+            ClearRecordForm();
+        }
+
+        private async void ImportRecordsButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".xlsx");
+                picker.FileTypeFilter.Add(".xls");
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // Ê¹ÓÃ ExcelImportService µ¼Èë½±³Í¼ÇÂ¼
+                    var records = await ExcelImportService.ImportRecordsFromExcelAsync(file);
+
+                    foreach (var record in records)
+                    {
+                        var rewardPunishmentRecord = new RewardPunishmentRecord
+                        {
+                            StudentId = GetStudentIdFromRecord(record),
+                            StudentName = GetStudentNameById(GetStudentIdFromRecord(record)),
+                            Type = MapRecordTypeToDisplay(record.RecordType),
+                            Description = record.Description ?? "",
+                            Name = ExtractRecordName(record.Description ?? ""),
+                            Level = "Ğ£¼¶", // Ä¬ÈÏ¼¶±ğ
+                            Date = DateTimeOffset.Now, // Ä¬ÈÏµ±Ç°Ê±¼ä
+                            Organization = "Ñ§Ğ£"
+                        };
+                        Records.Add(rewardPunishmentRecord);
+                    }
+
+                    ShowInfoDialog("µ¼Èë³É¹¦", $"½±³Í¼ÇÂ¼µ¼ÈëÍê³É£¡¹²µ¼Èë {records.Count} Ìõ¼ÇÂ¼¡£");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("µ¼ÈëÊ§°Ü", $"½±³Í¼ÇÂ¼µ¼ÈëÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private string GetStudentIdFromRecord(StudentRecord record)
+        {
+            // ÓÉÓÚ StudentRecord Ê¹ÓÃ int StudentId ¶øÎÒÃÇĞèÒª string£¬ÕâÀïĞèÒª×ª»»Âß¼­
+            // ¿ÉÄÜĞèÒªÍ¨¹ıÊı¾İ¿â²éÑ¯»ñÈ¡Êµ¼ÊµÄÑ§ºÅ
+            return record.StudentId.ToString(); // ÁÙÊ±ÊµÏÖ
+        }
+
+        private string MapRecordTypeToDisplay(string recordType)
+        {
+            return recordType switch
+            {
+                "Award" => "½±Àø",
+                "Punishment" => "´¦·Ö",
+                "Grade" => "³É¼¨",
+                _ => recordType
+            };
+        }
+
+        private string ExtractRecordName(string description)
+        {
+            // ´ÓÃèÊöÖĞÌáÈ¡½±³ÍÃû³ÆµÄ¼òµ¥Âß¼­
+            if (description.Length > 20)
+                return description.Substring(0, 20) + "...";
+            return description;
+        }
+
+        private async void SaveRecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var record = GetRecordFromForm();
+                if (record == null) return;
+
+                if (_selectedRecord == null)
+                {
+                    // ĞÂÔö¼ÇÂ¼
+                    // TODO: ±£´æµ½Êı¾İ¿â
+                    // await RecordService.AddRecordAsync(record);
+
+                    Records.Add(record);
+                    ShowInfoDialog("±£´æ³É¹¦", "½±³Í¼ÇÂ¼ÒÑÌí¼Ó£¡");
+                }
+                else
+                {
+                    // ¸üĞÂ¼ÇÂ¼
+                    // TODO: ¸üĞÂÊı¾İ¿â
+                    // await RecordService.UpdateRecordAsync(record);
+
+                    var index = Records.IndexOf(_selectedRecord);
+                    if (index >= 0)
+                    {
+                        Records[index] = record;
+                    }
+                    ShowInfoDialog("±£´æ³É¹¦", "½±³Í¼ÇÂ¼ÒÑ¸üĞÂ£¡");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("±£´æÊ§°Ü", $"±£´æ½±³Í¼ÇÂ¼Ê±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private RewardPunishmentRecord? GetRecordFromForm()
+        {
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            // ²éÕÒ½±³Í¼ÇÂ¼±íµ¥¿Ø¼ş
+            var recordPanel = FindRecordDetailsPanel();
+            if (recordPanel != null)
+            {
+                FindFormControls(recordPanel, textBoxes, comboBoxes, datePickers);
+            }
+
+            var record = new RewardPunishmentRecord();
+
+            foreach (var textBox in textBoxes)
+            {
+                switch (textBox.Header?.ToString())
+                {
+                    case "Ñ§ºÅ":
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            ShowErrorDialog("ÑéÖ¤Ê§°Ü", "Ñ§ºÅ²»ÄÜÎª¿Õ£¡");
+                            return null;
+                        }
+                        record.StudentId = textBox.Text.Trim();
+                        break;
+                    case "Ñ§ÉúĞÕÃû":
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            ShowErrorDialog("ÑéÖ¤Ê§°Ü", "Ñ§ÉúĞÕÃû²»ÄÜÎª¿Õ£¡");
+                            return null;
+                        }
+                        record.StudentName = textBox.Text.Trim();
+                        break;
+                    case "½±³ÍÃû³Æ":
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            ShowErrorDialog("ÑéÖ¤Ê§°Ü", "½±³ÍÃû³Æ²»ÄÜÎª¿Õ£¡");
+                            return null;
+                        }
+                        record.Name = textBox.Text.Trim();
+                        break;
+                    case "°ä·¢»ú¹¹":
+                        record.Organization = textBox.Text.Trim();
+                        break;
+                    case "ÏêÏ¸ÃèÊö":
+                        record.Description = textBox.Text.Trim();
+                        break;
+                }
+            }
+
+            foreach (var comboBox in comboBoxes)
+            {
+                if (comboBox.Header?.ToString() == "¼ÇÂ¼ÀàĞÍ" && comboBox.SelectedItem is ComboBoxItem typeItem)
+                {
+                    record.Type = typeItem.Content?.ToString() ?? "";
+                }
+                else if (comboBox.Header?.ToString() == "¼ÇÂ¼¼¶±ğ" && comboBox.SelectedItem is ComboBoxItem levelItem)
+                {
+                    record.Level = levelItem.Content?.ToString() ?? "";
+                }
+            }
+
+            foreach (var datePicker in datePickers)
+            {
+                if (datePicker.Header?.ToString() == "»ñµÃÊ±¼ä")
+                {
+                    record.Date = datePicker.Date;
+                }
+            }
+
+            return record;
+        }
+
+        private StackPanel? FindRecordDetailsPanel()
+        {
+            // µİ¹é²éÕÒ½±³Í¼ÇÂ¼ÏêÇéÃæ°å
+            return FindChildOfType<StackPanel>(this, "½±³Í¼ÇÂ¼ÏêÇé");
+        }
+
+        private void ClearRecordForm()
+        {
+            var textBoxes = new List<TextBox>();
+            var comboBoxes = new List<ComboBox>();
+            var datePickers = new List<DatePicker>();
+
+            var recordPanel = FindRecordDetailsPanel();
+            if (recordPanel != null)
+            {
+                FindFormControls(recordPanel, textBoxes, comboBoxes, datePickers);
+
+                foreach (var textBox in textBoxes)
+                {
+                    textBox.Text = string.Empty;
+                }
+
+                foreach (var comboBox in comboBoxes)
+                {
+                    comboBox.SelectedIndex = -1;
+                }
+
+                foreach (var datePicker in datePickers)
+                {
+                    datePicker.Date = DateTimeOffset.Now;
+                }
+            }
+        }
+
+        private async void DeleteRecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedRecord == null)
+            {
+                ShowErrorDialog("²Ù×÷Ê§°Ü", "ÇëÏÈÑ¡ÔñÒªÉ¾³ıµÄ¼ÇÂ¼£¡");
+                return;
+            }
+
+            var result = await ShowConfirmDialog("È·ÈÏÉ¾³ı", $"È·¶¨ÒªÉ¾³ı {_selectedRecord.StudentName} µÄ {_selectedRecord.Name} ¼ÇÂ¼Âğ£¿´Ë²Ù×÷²»¿É³·Ïú¡£");
+            if (result)
+            {
+                try
+                {
+                    // TODO: ´ÓÊı¾İ¿âÉ¾³ı
+                    // await RecordService.DeleteRecordAsync(_selectedRecord.Id);
+
+                    Records.Remove(_selectedRecord);
+                    _selectedRecord = null;
+                    ClearRecordForm();
+
+                    ShowInfoDialog("É¾³ı³É¹¦", "½±³Í¼ÇÂ¼ÒÑÉ¾³ı£¡");
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorDialog("É¾³ıÊ§°Ü", $"É¾³ı½±³Í¼ÇÂ¼Ê±·¢Éú´íÎó£º{ex.Message}");
+                }
+            }
+        }
+
+        private void ClearRecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            ClearRecordForm();
+        }
+
+        private async void SelectFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".pdf");
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".doc");
+                picker.FileTypeFilter.Add(".docx");
+
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(((App)Application.Current).MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // TODO: ´¦ÀíÖ¤ÊéÎÄ¼şÉÏ´«
+                    // var uploadedPath = await FileUploadService.UploadCertificateAsync(file);
+                    // if (_selectedRecord != null)
+                    // {
+                    //     _selectedRecord.CertificateFile = uploadedPath;
+                    // }
+
+                    ShowInfoDialog("ÉÏ´«³É¹¦", $"Ö¤ÊéÎÄ¼ş {file.Name} ÒÑÑ¡Ôñ£¡");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog("ÎÄ¼şÑ¡ÔñÊ§°Ü", $"Ñ¡ÔñÖ¤ÊéÎÄ¼şÊ±·¢Éú´íÎó£º{ex.Message}");
+            }
+        }
+
+        private void FilterRecordsByType(string type)
+        {
+            // TODO: ÊµÏÖ°´¼ÇÂ¼ÀàĞÍÉ¸Ñ¡µÄÂß¼­
+            // var filteredRecords = await RecordService.GetRecordsByTypeAsync(type);
+            // Records.Clear();
+            // foreach (var record in filteredRecords)
+            // {
+            //     Records.Add(record);
+            // }
+        }
+
+        private void FilterRecordsByLevel(string level)
+        {
+            // TODO: ÊµÏÖ°´¼ÇÂ¼¼¶±ğÉ¸Ñ¡µÄÂß¼­
+            // var filteredRecords = await RecordService.GetRecordsByLevelAsync(level);
+            // Records.Clear();
+            // foreach (var record in filteredRecords)
+            // {
+            //     Records.Add(record);
+            // }
+        }
+
+        #endregion
+
+        #region ComboBoxÊÂ¼ş´¦Àí
+
+        private void SemesterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var semester = selectedItem.Content?.ToString();
+                if (!string.IsNullOrEmpty(semester))
+                {
+                    FilterGradesBySemester(semester);
+                }
+            }
+        }
+
+        private void MajorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var major = selectedItem.Content?.ToString();
+                if (!string.IsNullOrEmpty(major))
+                {
+                    FilterGradesByMajor(major);
+                }
+            }
+        }
+
+        private void RecordTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var recordType = selectedItem.Content?.ToString();
+                if (!string.IsNullOrEmpty(recordType))
+                {
+                    FilterRecordsByType(recordType);
+                }
+            }
+        }
+
+        private void RecordLevelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                var recordLevel = selectedItem.Content?.ToString();
+                if (!string.IsNullOrEmpty(recordLevel))
+                {
+                    FilterRecordsByLevel(recordLevel);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Í¨ÓÃ¶Ô»°¿òºÍ¸¨Öú·½·¨
+
+        private async void ShowInfoDialog(string title, string message)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = title,
+                Content = message,
+                CloseButtonText = "È·¶¨",
+                XamlRoot = this.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+
+        private async void ShowErrorDialog(string title, string message)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = title,
+                Content = message,
+                CloseButtonText = "È·¶¨",
+                XamlRoot = this.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+
+        private async Task<bool> ShowConfirmDialog(string title, string message)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = title,
+                Content = message,
+                PrimaryButtonText = "È·¶¨",
+                CloseButtonText = "È¡Ïû",
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+            return result == ContentDialogResult.Primary;
+        }
+
+        private void SearchStudents(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // TODO: ÏÔÊ¾ËùÓĞÑ§Éú
+                // LoadInitialData();
+                return;
+            }
+
+            // TODO: ÊµÏÖÑ§ÉúËÑË÷Âß¼­
+            // var filteredStudents = await StudentService.SearchStudentsAsync(searchText);
+            // Students.Clear();
+            // foreach (var student in filteredStudents)
+            // {
+            //     Students.Add(student);
+            // }
+        }
+
+        #endregion
+    }
+
+    // ×ª»»Æ÷Àà
     public class StatusToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -1401,10 +1507,10 @@ namespace GFMS.Pages
             {
                 return status switch
                 {
-                    "åœ¨æ ¡" => new SolidColorBrush(Colors.Green),
-                    "ä¼‘å­¦" => new SolidColorBrush(Colors.Orange),
-                    "é€€å­¦" => new SolidColorBrush(Colors.Red),
-                    "æ¯•ä¸š" => new SolidColorBrush(Colors.Blue),
+                    "ÔÚĞ£" => new SolidColorBrush(Colors.Green),
+                    "ĞİÑ§" => new SolidColorBrush(Colors.Orange),
+                    "ÍËÑ§" => new SolidColorBrush(Colors.Red),
+                    "±ÏÒµ" => new SolidColorBrush(Colors.Blue),
                     _ => new SolidColorBrush(Colors.Gray)
                 };
             }
@@ -1425,8 +1531,8 @@ namespace GFMS.Pages
             {
                 return type switch
                 {
-                    "å¥–åŠ±" => new SolidColorBrush(Colors.Green),
-                    "æƒ©ç½š" => new SolidColorBrush(Colors.Red),
+                    "½±Àø" => new SolidColorBrush(Colors.Green),
+                    "³Í·£" => new SolidColorBrush(Colors.Red),
                     _ => new SolidColorBrush(Colors.Gray)
                 };
             }
