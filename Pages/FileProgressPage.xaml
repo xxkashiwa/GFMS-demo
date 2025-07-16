@@ -1,14 +1,387 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="GFMS.Pages.FileProgressPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:GFMS.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GFMS.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
+        <!--  页面标题  -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,8"
+            FontSize="28"
+            FontWeight="SemiBold"
+            Text="档案转递" />
+
+        <!--  页面副标题  -->
+        <TextBlock
+            Grid.Row="1"
+            Margin="0,0,0,20"
+            Foreground="{ThemeResource SystemBaseMediumColor}"
+            Text="学生档案转递申请和管理"
+            TextWrapping="Wrap" />
+
+        <!--  管理员操作按钮区域  -->
+        <Grid
+            x:Name="AdminControlPanel"
+            Grid.Row="2"
+            Margin="0,0,0,20"
+            Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button
+                    x:Name="SwitchToApplicationViewButton"
+                    Padding="16,8"
+                    Background="{ThemeResource SystemAccentColor}"
+                    Click="SwitchToApplicationViewButton_Click"
+                    Content="转换为档案申请页" />
+            </StackPanel>
+        </Grid>
+
+        <!--  学生调档申请表单区域  -->
+        <Grid
+            x:Name="StudentApplicationForm"
+            Grid.Row="3"
+            Margin="0,0,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  表单标题  -->
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,16"
+                FontSize="20"
+                FontWeight="SemiBold"
+                Text="调档申请" />
+
+            <!--  表单内容  -->
+            <Grid Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!--  第一行：学号和姓名  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,0,8,16">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        FontWeight="Medium"
+                        Text="学号" />
+                    <TextBox x:Name="StudentIdTextBox" PlaceholderText="请输入学号" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="8,0,0,16">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        FontWeight="Medium"
+                        Text="姓名" />
+                    <TextBox x:Name="NameTextBox" PlaceholderText="请输入姓名" />
+                </StackPanel>
+
+                <!--  第二行：地址和电话  -->
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,0,8,16">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        FontWeight="Medium"
+                        Text="档案接受地址" />
+                    <TextBox x:Name="AddressTextBox" PlaceholderText="请输入档案接受地址" />
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="8,0,0,16">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        FontWeight="Medium"
+                        Text="联系电话" />
+                    <TextBox x:Name="TelephoneTextBox" PlaceholderText="请输入联系电话" />
+                </StackPanel>
+
+                <!--  第三行：备注和提交按钮  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0,0">
+                    <TextBlock
+                        Margin="0,0,0,4"
+                        FontWeight="Medium"
+                        Text="备注" />
+                    <TextBox
+                        x:Name="DetailTextBox"
+                        Height="80"
+                        Margin="0,0,0,16"
+                        AcceptsReturn="True"
+                        PlaceholderText="请输入备注信息"
+                        TextWrapping="Wrap" />
+                    <Button
+                        x:Name="SubmitApplicationButton"
+                        Padding="20,8"
+                        HorizontalAlignment="Right"
+                        Background="{ThemeResource SystemAccentColor}"
+                        Click="SubmitApplicationButton_Click"
+                        Content="提交申请" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!--  表格区域  -->
+        <Grid Grid.Row="4">
+            <!--  学生历史申请表格  -->
+            <Grid x:Name="StudentHistoryTable">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,16"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="历史申请记录" />
+
+                <ListView
+                    x:Name="StudentApplicationsListView"
+                    Grid.Row="1"
+                    Padding="0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    SelectionMode="Single">
+                    <ListView.Header>
+                        <Grid Height="48">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="申请ID" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="接受地址" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="联系方式" />
+                            <TextBlock
+                                Grid.Column="3"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="转递状态" />
+                        </Grid>
+                    </ListView.Header>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid MinHeight="48" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="2*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Id}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Address}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Telephone}" />
+                                <TextBlock
+                                    Grid.Column="3"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding State, Converter={StaticResource TransferStateToStringConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+            <!--  管理员全部申请表格  -->
+            <Grid x:Name="AdminAllApplicationsTable" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,16"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="所有调档申请" />
+
+                <ListView
+                    x:Name="AdminApplicationsListView"
+                    Grid.Row="1"
+                    Padding="0"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    SelectionMode="Single">
+                    <ListView.Header>
+                        <Grid Height="48">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="2.5*" />
+                                <ColumnDefinition Width="1.5*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1.5*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="申请ID" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="学号" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="姓名" />
+                            <TextBlock
+                                Grid.Column="3"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="接受地址" />
+                            <TextBlock
+                                Grid.Column="4"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="联系方式" />
+                            <TextBlock
+                                Grid.Column="5"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="备注" />
+                            <TextBlock
+                                Grid.Column="6"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="转递状态" />
+                        </Grid>
+                    </ListView.Header>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid MinHeight="48" Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="2.5*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="1.5*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Id}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding StudentId}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Name}" />
+                                <TextBlock
+                                    Grid.Column="3"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Address}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Grid.Column="4"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Telephone}" />
+                                <TextBlock
+                                    Grid.Column="5"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Detail}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <ComboBox
+                                    Grid.Column="6"
+                                    Margin="16,4,0,4"
+                                    VerticalAlignment="Center"
+                                    SelectedValue="{Binding State, Converter={StaticResource TransferStateToStringConverter}, Mode=TwoWay}"
+                                    SelectedValuePath="Content"
+                                    SelectionChanged="StatusComboBox_SelectionChanged"
+                                    Tag="{Binding}">
+                                    <ComboBoxItem Content="档案预备中" />
+                                    <ComboBoxItem Content="转递中" />
+                                    <ComboBoxItem Content="已完成" />
+                                </ComboBox>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
