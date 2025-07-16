@@ -1,35 +1,76 @@
 using GFMS.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using System.Threading.Tasks;
 
 namespace GFMS.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class HomePage : Page
     {
+        private DispatcherTimer _timer;
+
         public HomePage()
         {
             InitializeComponent();
+            
+            // 初始化定时器，用于更新系统时间
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+            
+            // 更新初始系统时间
+            UpdateSystemTime();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            
+            // 加载用户信息
+            UpdateUserInfo();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            
+            // 停止定时器
+            _timer.Stop();
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            UpdateSystemTime();
+        }
+
+        private void UpdateSystemTime()
+        {
+            SystemTimeText.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        private void UpdateUserInfo()
+        {
+            if (UserManager.Instance.IsAuthed && UserManager.Instance.AuthedUser != null)
+            {
+                UserNameText.Text = UserManager.Instance.AuthedUser.UserName ?? UserManager.Instance.AuthedUser.UserId;
+                
+                // 显示用户角色
+                string role = UserManager.Instance.AuthedUser.GrantedType switch
+                {
+                    "Admin" => "管理员",
+                    "Manager" => "经理",
+                    "Staff" => "普通员工",
+                    _ => "未知角色"
+                };
+                
+                UserRoleText.Text = role;
+            }
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             UserManager.Instance.Logout();
         }

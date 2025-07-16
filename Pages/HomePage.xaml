@@ -9,7 +9,227 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock x:Name="TestLabel" Text="已经登陆" />
-        <Button Click="Button_Click" Content="logout" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- 顶部标题区域 -->
+        <StackPanel 
+            Grid.Row="0" 
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,20,0,20"
+            Spacing="20">
+            <FontIcon 
+                FontFamily="Segoe MDL2 Assets"
+                Glyph="&#xED43;"
+                FontSize="48"
+                Foreground="{ThemeResource SystemAccentColor}" />
+            <TextBlock 
+                Text="毕业生档案管理系统"
+                FontSize="32"
+                FontWeight="SemiBold"
+                VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!-- 系统信息卡片区域 - 三个卡片水平排列 -->
+        <Grid 
+            Grid.Row="1"
+            Margin="20,0,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 系统运行状态卡片 -->
+            <Border 
+                Grid.Column="0" 
+                Margin="0,0,8,0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock 
+                        Grid.Row="0"
+                        Text="系统运行状态"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Margin="0,0,0,12" />
+
+                    <StackPanel 
+                        Grid.Row="1" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <FontIcon 
+                            Glyph="&#xE7FB;" 
+                            FontSize="24"
+                            Foreground="Green" />
+                        <TextBlock 
+                            Text="正常" 
+                            FontSize="20" 
+                            FontWeight="SemiBold"
+                            Foreground="Green"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 系统时间卡片 -->
+            <Border 
+                Grid.Column="1" 
+                Margin="8,0,8,0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock 
+                        Grid.Row="0"
+                        Text="系统时间"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Margin="0,0,0,12" />
+
+                    <StackPanel 
+                        Grid.Row="1" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <FontIcon 
+                            Glyph="&#xE823;" 
+                            FontSize="24" />
+                        <TextBlock 
+                            x:Name="SystemTimeText"
+                            Text="2024-01-01 12:00:00" 
+                            FontSize="16" 
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 在线访问人数卡片 -->
+            <Border 
+                Grid.Column="2" 
+                Margin="8,0,0,0"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid Padding="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock 
+                        Grid.Row="0"
+                        Text="在线访问人数"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Margin="0,0,0,12" />
+
+                    <StackPanel 
+                        Grid.Row="1" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <FontIcon 
+                            Glyph="&#xE716;" 
+                            FontSize="24" />
+                        <TextBlock 
+                            Text="1" 
+                            FontSize="20" 
+                            FontWeight="SemiBold"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 用户信息卡片 -->
+        <Border 
+            Grid.Row="2" 
+            Margin="20,0,20,20"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <Grid Padding="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <!-- 左侧用户信息 -->
+                <StackPanel 
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Border 
+                        Width="60" 
+                        Height="60"
+                        CornerRadius="30"
+                        Background="{ThemeResource SystemAccentColor}">
+                        <FontIcon 
+                            Glyph="&#xE77B;" 
+                            FontSize="30"
+                            Foreground="White" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock 
+                            Text="用户信息"
+                            FontSize="14"
+                            Opacity="0.8" />
+                        <TextBlock 
+                            x:Name="UserNameText"
+                            Text="用户名"
+                            FontSize="18"
+                            FontWeight="SemiBold"
+                            Margin="0,4,0,0" />
+                        <TextBlock 
+                            x:Name="UserRoleText"
+                            Text="角色"
+                            Opacity="0.8"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 右侧登出按钮 -->
+                <Button 
+                    Grid.Column="1"
+                    Content="登出系统"
+                    Click="LogoutButton_Click" 
+                    VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- 其他内容区域 -->
+        <Grid Grid.Row="3" Margin="20,0,20,20">
+            <TextBlock 
+                Text="欢迎使用毕业生档案管理系统"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="22"
+                Opacity="0.6" />
+        </Grid>
     </Grid>
 </Page>
