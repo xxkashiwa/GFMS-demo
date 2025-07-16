@@ -10,189 +10,76 @@
 
     <Grid>
         <StackPanel
-            Width="450"
+            Width="400"
             MaxWidth="600"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Spacing="20">
+            Spacing="16">
 
-            <!--  Logo和标题区域  -->
-            <StackPanel HorizontalAlignment="Center" Spacing="15">
-                <Border
-                    Width="100"
-                    Height="100"
-                    HorizontalAlignment="Center"
-                    Background="{ThemeResource SystemAccentColor}"
-                    CornerRadius="50">
-                    <FontIcon
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="50"
-                        Foreground="White"
-                        Glyph="&#xE8A5;" />
-                </Border>
-
-                <StackPanel HorizontalAlignment="Center" Spacing="5">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="28"
-                        FontWeight="Bold"
-                        Text="毕业档案管理系统" />
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="14"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Graduate File Management System" />
-                </StackPanel>
-            </StackPanel>
-
-            <!--  登录表单区域  -->
             <Border
-                Padding="30"
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1"
-                CornerRadius="12">
-                <StackPanel Spacing="20">
-
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        HorizontalAlignment="Center"
-                        FontSize="20"
-                        FontWeight="SemiBold"
-                        Text="用户登录" />
-
-                    <!--  用户名输入  -->
-                    <StackPanel Spacing="8">
-                        <TextBlock FontWeight="SemiBold" Text="用户名" />
-                        <TextBox
-                            x:Name="UsernameTextBox"
-                            Height="40"
-                            PlaceholderText="请输入用户名" />
-                    </StackPanel>
-
-                    <!--  密码输入  -->
-                    <StackPanel Spacing="8">
-                        <TextBlock FontWeight="SemiBold" Text="密码" />
-                        <PasswordBox
-                            x:Name="PasswordBox"
-                            Height="40"
-                            PlaceholderText="请输入密码" />
-                    </StackPanel>
-
-                    <!--  角色选择  -->
-                    <StackPanel Spacing="8">
-                        <TextBlock FontWeight="SemiBold" Text="登录角色" />
-                        <ComboBox
-                            x:Name="RoleComboBox"
-                            Height="40"
-                            HorizontalAlignment="Stretch">
-                            <ComboBoxItem Tag="Admin">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <FontIcon Foreground="#FF6B35" Glyph="&#xE7EF;" />
-                                    <StackPanel>
-                                        <TextBlock FontWeight="SemiBold" Text="系统管理员" />
-                                        <TextBlock
-                                            FontSize="11"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="拥有所有功能权限" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem Tag="Teacher">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <FontIcon Foreground="#4CAF50" Glyph="&#xE77B;" />
-                                    <StackPanel>
-                                        <TextBlock FontWeight="SemiBold" Text="教师/辅导员" />
-                                        <TextBlock
-                                            FontSize="11"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="档案材料管理和审核" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem Tag="Student">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <FontIcon Foreground="#2196F3" Glyph="&#xE8D4;" />
-                                    <StackPanel>
-                                        <TextBlock FontWeight="SemiBold" Text="学生" />
-                                        <TextBlock
-                                            FontSize="11"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="查看个人档案信息" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </ComboBoxItem>
-                            <ComboBoxItem Tag="Archive">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <FontIcon Foreground="#9C27B0" Glyph="&#xE8A5;" />
-                                    <StackPanel>
-                                        <TextBlock FontWeight="SemiBold" Text="档案管理员" />
-                                        <TextBlock
-                                            FontSize="11"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="档案转递和查询服务" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <!--  记住登录选项  -->
-                    <CheckBox
-                        x:Name="RememberMeCheckBox"
-                        Margin="0,10,0,0"
-                        Content="记住我的登录状态" />
-
-                    <!--  登录按钮  -->
-                    <Button
-                        x:Name="LoginButton"
-                        Height="45"
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Stretch"
-                        Click="LoginButton_Click"
-                        Content="登 录"
-                        FontSize="16"
-                        FontWeight="SemiBold"
-                        Style="{StaticResource AccentButtonStyle}" />
-
-                    <!--  错误消息显示  -->
-                    <Border
-                        x:Name="ErrorMessageBorder"
-                        Padding="12,8"
-                        Background="#FDF2F2"
-                        BorderBrush="#C42B1C"
-                        BorderThickness="1"
-                        CornerRadius="6"
-                        Visibility="Collapsed">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon
-                                FontSize="16"
-                                Foreground="#C42B1C"
-                                Glyph="&#xE783;" />
-                            <TextBlock
-                                x:Name="ErrorMessageText"
-                                VerticalAlignment="Center"
-                                Foreground="#C42B1C"
-                                Text="" />
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+                Width="120"
+                Height="120"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                Background="{ThemeResource SystemAccentColor}"
+                CornerRadius="60">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="60"
+                    Foreground="White"
+                    Glyph="&#xE77B;" />
             </Border>
 
-            <!--  底部信息  -->
-            <StackPanel HorizontalAlignment="Center" Spacing="5">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="© 2024 毕业档案管理系统" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="11"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="Version 1.0.0" />
+            <TextBlock
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                FontSize="24"
+                FontWeight="Bold"
+                Text="GFMS 登录系统" />
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="用户名" />
+                <TextBox x:Name="UsernameTextBox" PlaceholderText="请输入用户名" />
             </StackPanel>
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="密码" />
+                <PasswordBox x:Name="PasswordBox" PlaceholderText="请输入密码" />
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+                <TextBlock Text="角色" />
+                <ComboBox
+                    x:Name="RoleComboBox"
+                    Width="400"
+                    HorizontalAlignment="Stretch"
+                    SelectedIndex="0">
+                    <ComboBoxItem Content="管理员" Tag="Admin" />
+                    <ComboBoxItem Content="经理" Tag="Manager" />
+                    <ComboBoxItem Content="普通员工" Tag="Staff" />
+                </ComboBox>
+            </StackPanel>
+
+            <CheckBox
+                x:Name="RememberMeCheckBox"
+                Margin="0,8,0,0"
+                Content="记住我的登录" />
+
+            <Button
+                x:Name="LoginButton"
+                Margin="0,20,0,0"
+                HorizontalAlignment="Stretch"
+                Click="LoginButton_Click"
+                Content="登 录"
+                Style="{StaticResource AccentButtonStyle}" />
+
+            <TextBlock
+                x:Name="ErrorMessageText"
+                HorizontalAlignment="Center"
+                Foreground="Red"
+                Text=""
+                Visibility="Collapsed" />
         </StackPanel>
     </Grid>
 </Page>

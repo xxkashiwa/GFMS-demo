@@ -29,11 +29,6 @@ namespace GFMS
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        /// <summary>
-        /// 获取主导航视图控件
-        /// </summary>
-        public NavigationView NavigationView => MainNavigationView;
-        
         public MainWindow()
         {
             InitializeComponent();
@@ -72,7 +67,7 @@ namespace GFMS
             {
                 contentFrame.Navigate(typeof(HomePage));
 
-                // ʹ��ģʽƥ��򻯽�ɫ�ж�
+                // ʹ��ģʽƥ��򻯽�ɫ�ж�
                 NavigationViewItem[] disableItems = UserManager.Instance.AuthedUser!.GrantedType switch
                 {
                     "Admin" => [],

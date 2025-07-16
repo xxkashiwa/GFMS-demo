@@ -8,35 +8,31 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!--  添加WinUI 3通用样式  -->
-                <ResourceDictionary Source="ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml" />
+                <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
 
-            <!--  手动定义所有InfoBar相关资源  -->
-            <!--  错误样式  -->
-            <SolidColorBrush x:Key="InfoBarErrorSeverityForeground" Color="#C42B1C" />
-            <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="#FDF2F2" />
-            <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#C42B1C" />
-
-            <!--  警告样式  -->
-            <SolidColorBrush x:Key="InfoBarWarningBackgroundBrush" Color="#FFF9F2" />
-            <SolidColorBrush x:Key="InfoBarWarningSeverityForeground" Color="#8A6914" />
-            <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="#F7630C" />
-
-            <!--  信息样式  -->
-            <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="#F3F9FF" />
-            <SolidColorBrush x:Key="InfoBarInformationalSeverityForeground" Color="#0F4A85" />
-            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="#0078D4" />
-
-            <!--  成功样式  -->
-            <SolidColorBrush x:Key="InfoBarSuccessBackgroundBrush" Color="#F3FDF0" />
-            <SolidColorBrush x:Key="InfoBarSuccessSeverityForeground" Color="#0E5814" />
-            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="#107C10" />
-
-            <!--  其他可能缺失的资源  -->
-            <SolidColorBrush x:Key="InfoBarCloseSeverityForeground" Color="#605E5C" />
-            <SolidColorBrush x:Key="InfoBarCloseBackgroundBrush" Color="#F8F8F8" />
-
+            <!--  自定义按钮样式，禁用悬停效果  -->
+            <Style x:Key="WindowControlButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Width" Value="30" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding Content}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!--  Other app resources here  -->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

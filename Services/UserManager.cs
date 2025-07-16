@@ -14,7 +14,7 @@ namespace GFMS.Services
         public static UserManager Instance => _instance ??= new UserManager();
         private UserManager()
         {
-            OnAuthedUserChanged = delegate { }; // Initialize the event with an empty delegate
+            OnAuthedUserChanged = delegate { }; // Initialize the event with an empty delegate  
         }
 
         private User? _authedUser;
@@ -44,14 +44,12 @@ namespace GFMS.Services
         public void LoadLoginState()
         {
             if (Windows.Storage.ApplicationData.Current.LocalSettings.Values.TryGetValue("AuthedUserId", out var userIdObj) &&
-     userIdObj is string userId)
+                userIdObj is string userId)
             {
-                // Here you would typically fetch the user details from a database or service
-                // For simplicity, we are creating a dummy user object
                 AuthedUser = new User
                 {
                     UserId = userId,
-                    // FetchUser(userId) 
+                    GrantedType = "Admin"
                 };
             }
             else

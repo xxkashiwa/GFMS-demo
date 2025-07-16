@@ -13,10 +13,12 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
+
     <Grid>
         <!--  主内容区  -->
         <NavigationView
             x:Name="MainNavigationView"
+            Canvas.ZIndex="1"
             IsBackButtonVisible="Collapsed"
             IsSettingsVisible="False"
             PaneDisplayMode="Top"
@@ -51,31 +53,32 @@
             </NavigationView.MenuItems>
             <Frame x:Name="contentFrame" />
         </NavigationView>
-        <!--  右上角标题栏  -->
-        <StackPanel
+
+        <!--  标题栏拖动区域 - 仅覆盖顶部但不覆盖导航项  -->
+        <Grid
             x:Name="AppTitleBar"
-            Margin="0,8,8,0"
+            Height="40"
+            Margin="0,0,120,0"
+            VerticalAlignment="Top"
+            Background="Transparent" />
+
+        <!--  右上角窗口控制按钮  -->
+        <StackPanel
+            x:Name="WindowControlButtons"
+            Margin="0,8,2,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
+            Canvas.ZIndex="2"
             Orientation="Horizontal"
-            Spacing="8">
-            <Button
-                Background="Transparent"
-                BorderBrush="Transparent"
-                Click="MinimizeButton_Click">
-                <FontIcon Glyph="&#xE921;" />
+            Spacing="4">
+            <Button Click="MinimizeButton_Click" Style="{StaticResource WindowControlButtonStyle}">
+                <FontIcon FontSize="20" Glyph="&#xE921;" />
             </Button>
-            <Button
-                Background="Transparent"
-                BorderBrush="Transparent"
-                Click="MaximizeButton_Click">
-                <FontIcon Glyph="&#xE922;" />
+            <Button Click="MaximizeButton_Click" Style="{StaticResource WindowControlButtonStyle}">
+                <FontIcon FontSize="20" Glyph="&#xE922;" />
             </Button>
-            <Button
-                Background="Transparent"
-                BorderBrush="Transparent"
-                Click="CloseButton_Click">
-                <FontIcon Glyph="&#xE8BB;" />
+            <Button Click="CloseButton_Click" Style="{StaticResource WindowControlButtonStyle}">
+                <FontIcon FontSize="20" Glyph="&#xE8BB;" />
             </Button>
         </StackPanel>
     </Grid>
