@@ -1545,7 +1545,7 @@ namespace GFMS.Pages
         }
     }
 
-    public class DateToStringConverter : IValueConverter
+    public partial class DateToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -1556,6 +1556,10 @@ namespace GFMS.Pages
             if (value is DateTime date)
             {
                 return date.ToString("yyyy-MM-dd");
+            }
+            if (value is DateOnly dateOnly)
+            {
+                return dateOnly.ToString("yyyy-MM-dd");
             }
             return string.Empty;
         }

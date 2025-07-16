@@ -31,13 +31,24 @@ namespace GFMS.Pages
         private ObservableCollection<ArchiveRequest> _organizeRequests = new();
         private ObservableCollection<ArchiveRequest> _transferRecords = new();
         private ArchiveRequest? _selectedRequest;
+        private bool _isLoaded = false;
 
         public FileProgressPage()
         {
             InitializeComponent();
             _transferService = ArchiveTransferService.Instance;
             InitializePagePermissions();
-            LoadData();
+            // 移除构造函数中的同步数据加载
+            this.Loaded += FileProgressPage_Loaded;
+        }
+
+        private async void FileProgressPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!_isLoaded)
+            {
+                await LoadDataAsync();
+                _isLoaded = true;
+            }
         }
 
         private void InitializePagePermissions()
@@ -57,78 +68,155 @@ namespace GFMS.Pages
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            LoadData();
+            // 确保不重复加载数据
+            if (!_isLoaded)
+            {
+                await LoadDataAsync();
+                _isLoaded = true;
+            }
         }
 
-        private void LoadData()
+        // 将同步方法改为异步方法
+        private async Task LoadDataAsync()
         {
-            LoadApplicationRequests();
-            LoadOrganizeRequests();
-            LoadTransferRecords();
+            try
+            {
+                // 显示加载状态（可选）
+                // ShowLoadingIndicator(true);
+
+                await Task.Run(() =>
+                {
+                    // 在后台线程加载数据
+                    LoadApplicationRequests();
+                    LoadOrganizeRequests();
+                    LoadTransferRecords();
+                });
+            }
+            catch (Exception ex)
+            {
+                // 错误处理
+                System.Diagnostics.Debug.WriteLine($"LoadDataAsync error: {ex.Message}");
+                await ShowErrorDialog("数据加载失败", $"加载页面数据时出现错误：{ex.Message}");
+            }
+            finally
+            {
+                // 隐藏加载状态（可选）
+                // ShowLoadingIndicator(false);
+            }
         }
 
         private void LoadApplicationRequests()
         {
-            var requests = _transferService.GetArchiveRequests();
-            _applicationRequests.Clear();
-            foreach (var request in requests)
+            try
             {
-                _applicationRequests.Add(request);
+                var requests = _transferService.GetArchiveRequests();
+
+                // 确保UI更新在主线程执行
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    _applicationRequests.Clear();
+                    foreach (var request in requests)
+                    {
+                        _applicationRequests.Add(request);
+                    }
+                    ApplicationList.ItemsSource = _applicationRequests;
+                });
             }
-            ApplicationList.ItemsSource = _applicationRequests;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadApplicationRequests error: {ex.Message}");
+            }
         }
 
         private void LoadOrganizeRequests()
         {
-            var requests = _transferService.GetArchiveRequestsByStatus("已通过");
-            _organizeRequests.Clear();
-            foreach (var request in requests)
+            try
             {
-                _organizeRequests.Add(request);
+                var requests = _transferService.GetArchiveRequestsByStatus("已通过");
+
+                // 确保UI更新在主线程执行
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    _organizeRequests.Clear();
+                    foreach (var request in requests)
+                    {
+                        _organizeRequests.Add(request);
+                    }
+                    OrganizeTaskList.ItemsSource = _organizeRequests;
+                });
             }
-            OrganizeTaskList.ItemsSource = _organizeRequests;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadOrganizeRequests error: {ex.Message}");
+            }
         }
 
         private void LoadTransferRecords()
         {
-            var records = _transferService.GetTransferRecords();
-            _transferRecords.Clear();
-            foreach (var record in records)
+            try
             {
-                _transferRecords.Add(record);
+                var records = _transferService.GetTransferRecords();
+
+                // 确保UI更新在主线程执行
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    _transferRecords.Clear();
+                    foreach (var record in records)
+                    {
+                        _transferRecords.Add(record);
+                    }
+                    TransferRecordList.ItemsSource = _transferRecords;
+                });
             }
-            TransferRecordList.ItemsSource = _transferRecords;
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadTransferRecords error: {ex.Message}");
+            }
+        }
+
+        // 添加一个刷新数据的方法
+        public async Task RefreshDataAsync()
+        {
+            await LoadDataAsync();
         }
 
         #region 调档申请标签页事件处理
 
         private async void AddApplicationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_transferService.CanCreateRequest())
+            try
             {
-                await ShowErrorDialog("权限不足", "只有学生可以提交调档申请");
-                return;
+                if (!_transferService.CanCreateRequest())
+                {
+                    await ShowErrorDialog("权限不足", "只有学生可以提交调档申请");
+                    return;
+                }
+
+                var dialog = new ArchiveRequestDialog();
+                dialog.XamlRoot = this.XamlRoot;
+
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary && dialog.Request != null)
+                {
+                    var success = await _transferService.CreateArchiveRequestAsync(dialog.Request);
+                    if (success)
+                    {
+                        await ShowInfoDialog("提交成功", "调档申请已提交，请等待审核");
+                        // 异步刷新数据
+                        _ = Task.Run(LoadApplicationRequests);
+                    }
+                    else
+                    {
+                        await ShowErrorDialog("提交失败", "提交调档申请时出现错误");
+                    }
+                }
             }
-
-            var dialog = new ArchiveRequestDialog();
-            dialog.XamlRoot = this.XamlRoot;
-
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary && dialog.Request != null)
+            catch (Exception ex)
             {
-                var success = await _transferService.CreateArchiveRequestAsync(dialog.Request);
-                if (success)
-                {
-                    await ShowInfoDialog("提交成功", "调档申请已提交，请等待审核");
-                    LoadApplicationRequests();
-                }
-                else
-                {
-                    await ShowErrorDialog("提交失败", "提交调档申请时出现错误");
-                }
+                await ShowErrorDialog("操作失败", $"添加申请时出现错误：{ex.Message}");
             }
         }
 
@@ -139,21 +227,40 @@ namespace GFMS.Pages
 
         private void ApplicationStatusComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var comboBox = sender as ComboBox;
-            if (comboBox?.SelectedItem is ComboBoxItem selectedItem)
+            try
             {
-                string status = selectedItem.Content.ToString();
-                FilterApplicationsByStatus(status);
+                var comboBox = sender as ComboBox;
+                if (comboBox?.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content != null)
+                {
+                    string status = selectedItem.Content.ToString() ?? string.Empty;
+                    // 异步执行筛选操作
+                    _ = Task.Run(() => FilterApplicationsByStatus(status));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ApplicationStatusComboBox_SelectionChanged error: {ex.Message}");
             }
         }
 
         private void FilterApplicationsByStatus(string status)
         {
-            var filteredRequests = _transferService.GetArchiveRequestsByStatus(status);
-            _applicationRequests.Clear();
-            foreach (var request in filteredRequests)
+            try
             {
-                _applicationRequests.Add(request);
+                var filteredRequests = _transferService.GetArchiveRequestsByStatus(status);
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    _applicationRequests.Clear();
+                    foreach (var request in filteredRequests)
+                    {
+                        _applicationRequests.Add(request);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"FilterApplicationsByStatus error: {ex.Message}");
             }
         }
 
@@ -183,62 +290,78 @@ namespace GFMS.Pages
 
         private async void ApproveApplicationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_transferService.CanReviewRequest())
+            try
             {
-                await ShowErrorDialog("权限不足", "只有管理员和老师可以审核申请");
-                return;
-            }
-
-            if (_selectedRequest == null)
-            {
-                await ShowErrorDialog("请选择申请", "请先选择要审核的申请");
-                return;
-            }
-
-            bool confirmed = await ShowConfirmDialog("确认批准", "确定要批准这个调档申请吗？");
-            if (confirmed)
-            {
-                var success = await _transferService.ReviewArchiveRequestAsync(_selectedRequest.Id, "已通过");
-                if (success)
+                if (!_transferService.CanReviewRequest())
                 {
-                    await ShowInfoDialog("操作成功", "申请已批准");
-                    LoadApplicationRequests();
-                    LoadOrganizeRequests();
+                    await ShowErrorDialog("权限不足", "只有管理员和老师可以审核申请");
+                    return;
                 }
-                else
+
+                if (_selectedRequest == null)
                 {
-                    await ShowErrorDialog("操作失败", "批准申请时出现错误");
+                    await ShowErrorDialog("请选择申请", "请先选择要审核的申请");
+                    return;
                 }
+
+                bool confirmed = await ShowConfirmDialog("确认批准", "确定要批准这个调档申请吗？");
+                if (confirmed)
+                {
+                    var success = await _transferService.ReviewArchiveRequestAsync(_selectedRequest.Id, "已通过");
+                    if (success)
+                    {
+                        await ShowInfoDialog("操作成功", "申请已批准");
+                        // 异步刷新数据
+                        _ = Task.Run(LoadApplicationRequests);
+                        _ = Task.Run(LoadOrganizeRequests);
+                    }
+                    else
+                    {
+                        await ShowErrorDialog("操作失败", "批准申请时出现错误");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorDialog("操作失败", $"批准申请时出现错误：{ex.Message}");
             }
         }
 
         private async void RejectApplicationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_transferService.CanReviewRequest())
+            try
             {
-                await ShowErrorDialog("权限不足", "只有管理员和老师可以审核申请");
-                return;
-            }
-
-            if (_selectedRequest == null)
-            {
-                await ShowErrorDialog("请选择申请", "请先选择要审核的申请");
-                return;
-            }
-
-            bool confirmed = await ShowConfirmDialog("确认拒绝", "确定要拒绝这个调档申请吗？");
-            if (confirmed)
-            {
-                var success = await _transferService.ReviewArchiveRequestAsync(_selectedRequest.Id, "已拒绝");
-                if (success)
+                if (!_transferService.CanReviewRequest())
                 {
-                    await ShowInfoDialog("操作成功", "申请已拒绝");
-                    LoadApplicationRequests();
+                    await ShowErrorDialog("权限不足", "只有管理员和老师可以审核申请");
+                    return;
                 }
-                else
+
+                if (_selectedRequest == null)
                 {
-                    await ShowErrorDialog("操作失败", "拒绝申请时出现错误");
+                    await ShowErrorDialog("请选择申请", "请先选择要审核的申请");
+                    return;
                 }
+
+                bool confirmed = await ShowConfirmDialog("确认拒绝", "确定要拒绝这个调档申请吗？");
+                if (confirmed)
+                {
+                    var success = await _transferService.ReviewArchiveRequestAsync(_selectedRequest.Id, "已拒绝");
+                    if (success)
+                    {
+                        await ShowInfoDialog("操作成功", "申请已拒绝");
+                        // 异步刷新数据
+                        _ = Task.Run(LoadApplicationRequests);
+                    }
+                    else
+                    {
+                        await ShowErrorDialog("操作失败", "拒绝申请时出现错误");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorDialog("操作失败", $"拒绝申请时出现错误：{ex.Message}");
             }
         }
 
@@ -275,9 +398,9 @@ namespace GFMS.Pages
         private void OrganizeStatusComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
-            if (comboBox?.SelectedItem is ComboBoxItem selectedItem)
+            if (comboBox?.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content is not null)
             {
-                string status = selectedItem.Content.ToString();
+                string status = selectedItem.Content.ToString() ?? string.Empty;
                 FilterOrganizeFilesByStatus(status);
             }
         }
@@ -454,7 +577,7 @@ namespace GFMS.Pages
             var comboBox = sender as ComboBox;
             if (comboBox?.SelectedItem is ComboBoxItem selectedItem)
             {
-                string status = selectedItem.Content.ToString();
+                string status = selectedItem.Content.ToString() ?? string.Empty;
                 FilterTransferRecordsByStatus(status);
             }
         }
@@ -585,42 +708,93 @@ namespace GFMS.Pages
 
         private async Task ShowInfoDialog(string title, string message)
         {
-            ContentDialog dialog = new ContentDialog()
+            try
             {
-                Title = title,
-                Content = message,
-                CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
-            };
-            await dialog.ShowAsync();
+                ContentDialog dialog = new ContentDialog()
+                {
+                    Title = title,
+                    Content = message,
+                    CloseButtonText = "确定",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ShowInfoDialog error: {ex.Message}");
+            }
         }
 
         private async Task ShowErrorDialog(string title, string message)
         {
-            ContentDialog dialog = new ContentDialog()
+            try
             {
-                Title = title,
-                Content = message,
-                CloseButtonText = "确定",
-                XamlRoot = this.XamlRoot
-            };
-            await dialog.ShowAsync();
+                ContentDialog dialog = new ContentDialog()
+                {
+                    Title = title,
+                    Content = message,
+                    CloseButtonText = "确定",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ShowErrorDialog error: {ex.Message}");
+            }
         }
 
         private async Task<bool> ShowConfirmDialog(string title, string message)
         {
-            ContentDialog dialog = new ContentDialog()
+            try
             {
-                Title = title,
-                Content = message,
-                PrimaryButtonText = "确定",
-                CloseButtonText = "取消",
-                XamlRoot = this.XamlRoot
-            };
-            var result = await dialog.ShowAsync();
-            return result == ContentDialogResult.Primary;
+                ContentDialog dialog = new ContentDialog()
+                {
+                    Title = title,
+                    Content = message,
+                    PrimaryButtonText = "确定",
+                    CloseButtonText = "取消",
+                    XamlRoot = this.XamlRoot
+                };
+                var result = await dialog.ShowAsync();
+                return result == ContentDialogResult.Primary;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ShowConfirmDialog error: {ex.Message}");
+                return false;
+            }
         }
 
         #endregion
+
+    }
+    public class DateTimeToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value is DateTimeOffset dateTimeOffset)
+            {
+                return dateTimeOffset.ToString("yyyy-MM-dd");
+            }
+            if (value is DateTime date)
+            {
+                return date.ToString("yyyy-MM-dd");
+            }
+            if (value is DateOnly dateOnly)
+            {
+                return dateOnly.ToString("yyyy-MM-dd");
+            }
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            if (value is string dateString && DateTimeOffset.TryParse(dateString, out DateTimeOffset result))
+            {
+                return result;
+            }
+            return DateTimeOffset.Now;
+        }
     }
 }

@@ -16,7 +16,6 @@ namespace GFMS.Dialogs
         private ListView AttachmentsList;
         private TextBox ReceiverNameTextBox;
         private TextBox ReceiverAddressTextBox;
-        private TextBox ReceiverContactTextBox;
 
         private TextBox StudentIdTextBox; // 添加缺失的控件声明
         private TextBox StudentNameTextBox; // 添加缺失的控件声明
