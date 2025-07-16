@@ -15,6 +15,7 @@
             <!-- Converters -->
             <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
             <converters:TypeToColorConverter x:Key="TypeToColorConverter" />
+            <converters:FileStatusToColorConverter x:Key="FileStatusToColorConverter" />
 
             <!--  自定义按钮样式，禁用悬停效果  -->
             <Style x:Key="WindowControlButtonStyle" TargetType="Button">

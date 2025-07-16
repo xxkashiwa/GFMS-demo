@@ -1,4 +1,5 @@
 using GFMS.Models;
+using GFMS.Services;
 using GFMS.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,15 +27,12 @@ namespace GFMS.Pages
     /// </summary>
     public sealed partial class DataCollectionPage : Page
     {
-        // 学生数据集合
-        private ObservableCollection<Student> Students { get; set; } = new ObservableCollection<Student>();
-
         public DataCollectionPage()
         {
             InitializeComponent();
 
-            // 设置ListView的数据源
-            StudentsListView.ItemsSource = Students;
+            // 设置ListView的数据源为StudentManager单例的Students集合
+            StudentsListView.ItemsSource = StudentManager.Instance.Students;
 
             // 加载样例数据显示（正式数据会从服务器加载）
             LoadStudentData();
@@ -74,6 +72,12 @@ namespace GFMS.Pages
         // 加载学生数据的方法（示例数据）
         private void LoadStudentData()
         {
+            // 如果StudentManager中已经有数据，则不再重复加载
+            if (StudentManager.Instance.Students.Count > 0)
+            {
+                return;
+            }
+
             // 添加一些示例学生数据用于测试
             var student1 = new Student
             {
@@ -120,6 +124,25 @@ namespace GFMS.Pages
                 Date = new DateTime(2023, 2, 10)
             });
 
+            // 添加示例档案文件数据
+            student1.Files.Add(new StudentFile
+            {
+                StudentId = student1.StudentId,
+                FileType = "毕业登记表",
+                FilePath = "files/2023001/graduation_form.pdf",
+                State = FileState.已审核,
+                UpdatedAt = new DateTime(2023, 5, 1)
+            });
+            student1.Files.Add(new StudentFile
+            {
+                StudentId = student1.StudentId,
+                FileType = "体检表",
+                FilePath = "files/2023001/medical_exam.pdf",
+                State = FileState.已上传,
+                UpdatedAt = new DateTime(2023, 5, 15)
+            });
+            // 实习报告未上传，所以不添加文件记录
+
             var student2 = new Student
             {
                 StudentId = "2023002",
@@ -154,8 +177,28 @@ namespace GFMS.Pages
                 Date = new DateTime(2023, 4, 10)
             });
 
-            Students.Add(student1);
-            Students.Add(student2);
+            // 添加示例档案文件数据
+            student2.Files.Add(new StudentFile
+            {
+                StudentId = student2.StudentId,
+                FileType = "毕业登记表",
+                FilePath = "files/2023002/graduation_form.pdf",
+                State = FileState.驳回,
+                UpdatedAt = new DateTime(2023, 4, 20)
+            });
+            student2.Files.Add(new StudentFile
+            {
+                StudentId = student2.StudentId,
+                FileType = "实习报告",
+                FilePath = "files/2023002/internship_report.pdf",
+                State = FileState.已审核,
+                UpdatedAt = new DateTime(2023, 5, 10)
+            });
+            // 体检表未上传，所以不添加文件记录
+
+            // 使用StudentManager单例添加学生数据
+            StudentManager.Instance.AddStudent(student1);
+            StudentManager.Instance.AddStudent(student2);
         }
     }
 }

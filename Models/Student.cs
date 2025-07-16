@@ -42,6 +42,11 @@ namespace GFMS.Models
         /// List of rewards and punishments associated with the student
         /// </summary>
         public List<RewardAndPunishment> RewardsAndPunishments { get; set; } = [];
+
+        /// <summary>
+        /// List of files associated with the student
+        /// </summary>
+        public List<StudentFile> Files { get; set; } = [];
     }
 
     public class Score
@@ -100,6 +105,74 @@ namespace GFMS.Models
         public string Details { get; set; } = string.Empty;
         public DateTime Date { get; set; } = DateTime.Now;
         public string TypeDisplayName => Type == "Reward" ? "奖励" : "惩罚";
+    }
+
+    /// <summary>
+    /// 用于档案管理页面显示的学生信息，包含档案状态
+    /// </summary>
+    public class StudentFileManagementItem
+    {
+        /// <summary>
+        /// 学生信息
+        /// </summary>
+        public Student Student { get; set; } = new Student();
+
+        /// <summary>
+        /// 毕业登记表状态
+        /// </summary>
+        public string GraduationFormStatus { get; set; } = "未上传";
+
+        /// <summary>
+        /// 体检表状态
+        /// </summary>
+        public string MedicalExamStatus { get; set; } = "未上传";
+
+        /// <summary>
+        /// 实习报告状态
+        /// </summary>
+        public string InternshipReportStatus { get; set; } = "未上传";
+
+        /// <summary>
+        /// 组合档案状态显示，格式为：状态1/状态2/状态3
+        /// </summary>
+        public string CombinedFileStatus => $"{GraduationFormStatus}/{MedicalExamStatus}/{InternshipReportStatus}";
+
+        /// <summary>
+        /// 学号
+        /// </summary>
+        public string StudentId => Student.StudentId;
+
+        /// <summary>
+        /// 获取指定文件类型的状态
+        /// </summary>
+        /// <param name="fileType">文件类型</param>
+        /// <returns>状态字符串</returns>
+        public string GetFileStatus(string fileType)
+        {
+            var file = Student.Files.FirstOrDefault(f => f.FileType == fileType);
+            if (file == null)
+            {
+                return "未上传";
+            }
+
+            return file.State switch
+            {
+                FileState.已上传 => "已上传",
+                FileState.已审核 => "已审核",
+                FileState.驳回 => "驳回",
+                _ => "未上传"
+            };
+        }
+
+        /// <summary>
+        /// 更新档案状态
+        /// </summary>
+        public void UpdateFileStatuses()
+        {
+            GraduationFormStatus = GetFileStatus("毕业登记表");
+            MedicalExamStatus = GetFileStatus("体检表");
+            InternshipReportStatus = GetFileStatus("实习报告");
+        }
     }
 
     /// <summary>
