@@ -50,9 +50,16 @@ namespace GFMS
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _window = new MainWindow();
+            
+            // 加载用户登录状态
             UserManager.Instance.LoadLoginState();
+            
+            // 初始化所有单例管理器的默认数据（除UserManager外）
+            DefaultDataService.InitializeAllDefaultData();
+            
             _window.Activate();
         }
+        
         public void HandleException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             e.Handled = true; //Don't crash the app.

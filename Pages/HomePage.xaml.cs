@@ -1,8 +1,10 @@
+using GFMS.Models;
 using GFMS.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GFMS.Pages
@@ -29,8 +31,11 @@ namespace GFMS.Pages
         {
             base.OnNavigatedTo(e);
             
-            // 加载用户信息
+            // 更新用户信息
             UpdateUserInfo();
+            
+            // 更新仪表板数据
+            UpdateDashboardData();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -63,11 +68,65 @@ namespace GFMS.Pages
                     "Admin" => "管理员",
                     "Manager" => "经理",
                     "Staff" => "普通员工",
+                    "Student" => "学生",
                     _ => "未知角色"
                 };
                 
                 UserRoleText.Text = role;
             }
+        }
+
+        /// <summary>
+        /// 更新仪表板数据
+        /// </summary>
+        private void UpdateDashboardData()
+        {
+            UpdateStudentStatistics();
+            UpdateFileTransferStatistics();
+        }
+
+        /// <summary>
+        /// 更新学生数据统计
+        /// </summary>
+        private void UpdateStudentStatistics()
+        {
+            var students = StudentManager.Instance.Students;
+            
+            // 总学生数
+            TotalStudentsText.Text = students.Count.ToString();
+            
+            // 已毕业学生数（毕业日期小于等于今天的学生）
+            var graduatedStudents = students.Where(s => s.GraduationDate <= DateTime.Now).Count();
+            GraduatedStudentsText.Text = graduatedStudents.ToString();
+            
+            // 有成绩记录的学生数
+            var studentsWithScores = students.Where(s => s.Scores.Any()).Count();
+            StudentsWithScoresText.Text = studentsWithScores.ToString();
+            
+            // 有奖惩记录的学生数
+            var studentsWithRewards = students.Where(s => s.RewardsAndPunishments.Any()).Count();
+            StudentsWithRewardsText.Text = studentsWithRewards.ToString();
+        }
+
+        /// <summary>
+        /// 更新档案转递申请统计
+        /// </summary>
+        private void UpdateFileTransferStatistics()
+        {
+            var applications = FileTransferApplicationManager.Instance.Applications;
+            
+            // 总申请数
+            TotalApplicationsText.Text = applications.Count.ToString();
+            
+            // 按状态统计
+            var preparingCount = applications.Where(a => a.State == TransferState.档案预备中).Count();
+            PreparingApplicationsText.Text = preparingCount.ToString();
+            
+            var transferringCount = applications.Where(a => a.State == TransferState.转递中).Count();
+            TransferringApplicationsText.Text = transferringCount.ToString();
+            
+            var completedCount = applications.Where(a => a.State == TransferState.已完成).Count();
+            CompletedApplicationsText.Text = completedCount.ToString();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)

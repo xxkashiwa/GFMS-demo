@@ -19,7 +19,6 @@ namespace GFMS.Services
         private FileTransferApplicationManager()
         {
             Applications = new ObservableCollection<FileTransferApplication>();
-            LoadDefaultData();
         }
 
         /// <summary>
@@ -92,53 +91,6 @@ namespace GFMS.Services
         public void Clear()
         {
             Applications.Clear();
-        }
-
-        /// <summary>
-        /// 加载默认数据
-        /// </summary>
-        private void LoadDefaultData()
-        {
-            // 添加一些默认数据用于演示
-            var application1 = new FileTransferApplication
-            {
-                Id = "2024001001", // 使用10位数字ID
-                StudentId = "2023001",
-                Name = "张三",
-                Address = "北京市朝阳区某某街道100号",
-                Telephone = "13800138001",
-                Detail = "工作需要",
-                State = TransferState.转递中,
-                CreatedAt = new DateTime(2024, 1, 15)
-            };
-
-            var application2 = new FileTransferApplication
-            {
-                Id = "2024001002", // 使用10位数字ID
-                StudentId = "2023002", 
-                Name = "李四",
-                Address = "上海市浦东新区某某路200号",
-                Telephone = "13800138002",
-                Detail = "继续深造",
-                State = TransferState.已完成,
-                CreatedAt = new DateTime(2024, 1, 10)
-            };
-
-            var application3 = new FileTransferApplication
-            {
-                Id = "2024001003", // 使用10位数字ID
-                StudentId = "2023003",
-                Name = "王五",
-                Address = "广州市天河区某某大道300号",
-                Telephone = "13800138003",
-                Detail = "户口迁移",
-                State = TransferState.档案预备中,
-                CreatedAt = new DateTime(2024, 2, 1)
-            };
-
-            Applications.Add(application1);
-            Applications.Add(application2);
-            Applications.Add(application3);
         }
     }
 }
