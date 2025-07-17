@@ -21,6 +21,7 @@
 		<None Remove="Pages\SearchPage.xaml" />
 		<None Remove="Views\RewardAndPunishimentDialogWindow.xaml" />
 		<None Remove="Views\ScoresDialogWindow.xaml" />
+		<None Remove="Views\FileDetailsDialog.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Remove="Pages\FileDetailsWindow.xaml" />
@@ -63,6 +64,11 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Views\RewardAndPunishimentDialogWindow.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="Views\FileDetailsDialog.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
