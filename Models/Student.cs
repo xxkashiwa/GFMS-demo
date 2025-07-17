@@ -2,7 +2,9 @@
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -110,8 +112,12 @@ namespace GFMS.Models
     /// <summary>
     /// 用于档案管理页面显示的学生信息，包含档案状态
     /// </summary>
-    public class StudentFileManagementItem
+    public class StudentFileManagementItem : INotifyPropertyChanged
     {
+        private string _graduationFormStatus = "未上传";
+        private string _medicalExamStatus = "未上传";
+        private string _internshipReportStatus = "未上传";
+
         /// <summary>
         /// 学生信息
         /// </summary>
@@ -120,17 +126,53 @@ namespace GFMS.Models
         /// <summary>
         /// 毕业登记表状态
         /// </summary>
-        public string GraduationFormStatus { get; set; } = "未上传";
+        public string GraduationFormStatus
+        {
+            get => _graduationFormStatus;
+            set
+            {
+                if (_graduationFormStatus != value)
+                {
+                    _graduationFormStatus = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CombinedFileStatus));
+                }
+            }
+        }
 
         /// <summary>
         /// 体检表状态
         /// </summary>
-        public string MedicalExamStatus { get; set; } = "未上传";
+        public string MedicalExamStatus
+        {
+            get => _medicalExamStatus;
+            set
+            {
+                if (_medicalExamStatus != value)
+                {
+                    _medicalExamStatus = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CombinedFileStatus));
+                }
+            }
+        }
 
         /// <summary>
         /// 实习报告状态
         /// </summary>
-        public string InternshipReportStatus { get; set; } = "未上传";
+        public string InternshipReportStatus
+        {
+            get => _internshipReportStatus;
+            set
+            {
+                if (_internshipReportStatus != value)
+                {
+                    _internshipReportStatus = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CombinedFileStatus));
+                }
+            }
+        }
 
         /// <summary>
         /// 组合档案状态显示，格式为：状态1/状态2/状态3
@@ -172,6 +214,13 @@ namespace GFMS.Models
             GraduationFormStatus = GetFileStatus("毕业登记表");
             MedicalExamStatus = GetFileStatus("体检表");
             InternshipReportStatus = GetFileStatus("实习报告");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 

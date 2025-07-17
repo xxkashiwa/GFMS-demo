@@ -11,6 +11,9 @@
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
+		<!-- 确保使用UTF-8编码 -->
+		<Utf8Output>true</Utf8Output>
+		<FileEncoding>UTF-8</FileEncoding>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Pages\AuthPage.xaml" />
@@ -21,11 +24,9 @@
 		<None Remove="Pages\SearchPage.xaml" />
 		<None Remove="Views\RewardAndPunishimentDialogWindow.xaml" />
 		<None Remove="Views\ScoresDialogWindow.xaml" />
-		<None Remove="Views\FileDetailsDialog.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Remove="Pages\FileDetailsWindow.xaml" />
-	  <Page Remove="Views\FileDetailsWindow.xaml" />
+	  <Page Remove="Views\FileManagementDialogWindow.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -55,20 +56,12 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="Pages\FileDetailsWindow.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </None>
-	  <None Update="Views\FileDetailsWindow.xaml">
+	  <None Update="Views\FileManagementDialogWindow.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Views\RewardAndPunishimentDialogWindow.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Views\FileDetailsDialog.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>
