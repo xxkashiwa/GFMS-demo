@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="GFMS.Views.AddRewardPunishmentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GFMS.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="添加奖惩记录"
+    PrimaryButtonText="确定"
+    SecondaryButtonText="取消"
+    DefaultButton="Primary">
+
+    <Grid Width="450" Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- 类型选择 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="类型" FontWeight="SemiBold" Margin="0,0,0,8" />
+            <ComboBox x:Name="TypeComboBox" Width="200" HorizontalAlignment="Left">
+                <ComboBoxItem Content="奖励" Tag="Reward" />
+                <ComboBoxItem Content="惩罚" Tag="Punishment" />
+            </ComboBox>
+        </StackPanel>
+
+        <!-- 详细信息输入 -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
+            <TextBlock Text="详细信息" FontWeight="SemiBold" Margin="0,0,0,8" />
+            <TextBox x:Name="DetailsTextBox" 
+                     PlaceholderText="请输入奖惩详细信息" 
+                     TextWrapping="Wrap" 
+                     AcceptsReturn="True" 
+                     Height="100" 
+                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </StackPanel>
+
+        <!-- 日期选择 -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,16">
+            <TextBlock Text="日期" FontWeight="SemiBold" Margin="0,0,0,8" />
+            <DatePicker x:Name="DatePicker" />
+        </StackPanel>
+
+        <!-- 错误信息显示 -->
+        <TextBlock x:Name="ErrorTextBlock" Grid.Row="3" Foreground="Red" Visibility="Collapsed" TextWrapping="Wrap" />
+    </Grid>
+</ContentDialog>

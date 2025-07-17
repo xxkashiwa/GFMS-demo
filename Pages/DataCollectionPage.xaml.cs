@@ -37,10 +37,18 @@ namespace GFMS.Pages
         }
 
         // 基本信息录入按钮点击事件
-        private void BasicInfoEntryButton_Click(object sender, RoutedEventArgs e)
+        private async void BasicInfoEntryButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: 显示学生基本信息录入对话框
-            // 此处仅作为演示，后续需实现具体逻辑
+            // 创建并显示添加学生信息对话框
+            var addStudentDialog = new Views.AddStudentDialog
+            {
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await addStudentDialog.ShowAsync();
+            
+            // 如果用户点击了确定按钮，学生信息已经在对话框中添加到StudentManager
+            // 由于ListView绑定到ObservableCollection，界面会自动更新
         }
 
         // 成绩详细按钮点击事件
