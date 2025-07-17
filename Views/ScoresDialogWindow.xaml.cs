@@ -1,4 +1,5 @@
 using GFMS.Models;
+using GFMS.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -23,7 +24,7 @@ using WinRT.Interop;
 namespace GFMS.Views
 {
     /// <summary>
-    /// ³É¼¨ÏêÏ¸ĞÅÏ¢´°¿Ú
+    /// æˆç»©è¯¦ç»†ä¿¡æ¯çª—å£
     /// </summary>
     public sealed partial class ScoresDialogWindow : Window
     {
@@ -31,7 +32,7 @@ namespace GFMS.Views
         private ObservableCollection<ScoreDisplayItem> _scoreDisplayItems;
         private ObservableCollection<SemesterSummary> _semesterSummaries;
 
-        public string StudentName => $"Ñ§Éú£º{_student?.Name} ({_student?.StudentId}) - ³É¼¨ÏêÏ¸";
+        public string StudentName => $"å­¦ç”Ÿï¼š{_student?.Name} ({_student?.StudentId}) - æˆç»©è¯¦ç»†";
 
         public ScoresDialogWindow(Student student)
         {
@@ -42,7 +43,7 @@ namespace GFMS.Views
             _semesterSummaries = new ObservableCollection<SemesterSummary>();
             ExtendsContentIntoTitleBar = true;
 
-            // ÉèÖÃ´°¿Ú´óĞ¡£¬Ê¹Æä±È¸¸´°¿ÚĞ¡
+            // è®¾ç½®çª—å£å¤§å°ï¼Œä½¿ç”¨åˆé€‚çš„å°ºå¯¸
             SetWindowSize();
 
             LoadScoreData();
@@ -57,24 +58,24 @@ namespace GFMS.Views
         {
             try
             {
-                // »ñÈ¡Ö÷´°¿ÚµÄ³ß´ç
+                // è·å–ä¸»çª—å£çš„å°ºå¯¸
                 var mainWindow = ((App)Application.Current)?.MainWindow;
                 if (mainWindow?.AppWindow != null)
                 {
                     var mainWindowSize = mainWindow.AppWindow.Size;
 
-                    // ÉèÖÃ¶Ô»°¿òÎªÖ÷´°¿ÚµÄ70%´óĞ¡
+                    // è®¾ç½®å¯¹è¯æ¡†ä¸ºä¸»çª—å£çš„80%å¤§å°
                     int dialogWidth = (int)(mainWindowSize.Width * 0.8);
                     int dialogHeight = (int)(mainWindowSize.Height * 0.8);
 
-                    // È·±£×îĞ¡³ß´ç
+                    // ç¡®ä¿æœ€å°å°ºå¯¸
                     dialogWidth = Math.Max(dialogWidth, 600);
                     dialogHeight = Math.Max(dialogHeight, 500);
 
-                    // ÉèÖÃ´°¿Ú´óĞ¡
+                    // è®¾ç½®çª—å£å¤§å°
                     AppWindow.Resize(new Windows.Graphics.SizeInt32(dialogWidth, dialogHeight));
 
-                    // ¾ÓÖĞÏÔÊ¾
+                    // å±…ä¸­æ˜¾ç¤º
                     var displayArea = DisplayArea.GetFromWindowId(mainWindow.AppWindow.Id, DisplayAreaFallback.Primary);
                     if (displayArea != null)
                     {
@@ -85,13 +86,13 @@ namespace GFMS.Views
                 }
                 else
                 {
-                    // Èç¹ûÎŞ·¨»ñÈ¡Ö÷´°¿Ú³ß´ç£¬Ê¹ÓÃÄ¬ÈÏ³ß´ç
+                    // å¦‚æœæ— æ³•è·å–ä¸»çª—å£å°ºå¯¸ï¼Œä½¿ç”¨é»˜è®¤å°ºå¯¸
                     AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 600));
                 }
             }
             catch
             {
-                // ³öÏÖÒì³£Ê±Ê¹ÓÃÄ¬ÈÏ³ß´ç
+                // å‘ç”Ÿå¼‚å¸¸æ—¶ä½¿ç”¨é»˜è®¤å°ºå¯¸
                 AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 600));
             }
         }
@@ -100,7 +101,7 @@ namespace GFMS.Views
         {
             _scoreDisplayItems.Clear();
 
-            // ½«Ñ§ÉúµÄ³É¼¨Êı¾İ×ª»»ÎªÏÔÊ¾Ïî
+            // å°†å­¦ç”Ÿçš„æˆç»©æ•°æ®è½¬æ¢ä¸ºæ˜¾ç¤ºé¡¹
             foreach (var semesterScores in _student.Scores)
             {
                 string semester = semesterScores.Key;
@@ -120,7 +121,7 @@ namespace GFMS.Views
         {
             _semesterSummaries.Clear();
 
-            // ¼ÆËãÃ¿¸öÑ§ÆÚµÄÆ½¾ù·Ö
+            // è®¡ç®—æ¯ä¸ªå­¦æœŸçš„å¹³å‡åˆ†
             foreach (var semesterScores in _student.Scores)
             {
                 string semester = semesterScores.Key;
@@ -139,19 +140,35 @@ namespace GFMS.Views
             }
         }
 
-        private void AddScoreButton_Click(object sender, RoutedEventArgs e)
+        private async void AddScoreButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: ÊµÏÖ²åÈë³É¼¨µÄÂß¼­
-            // Ä¿Ç°ÏÈÏÔÊ¾Õ¼Î»ĞÅÏ¢
-            var dialog = new ContentDialog
+            // åˆ›å»ºå¹¶æ˜¾ç¤ºæ·»åŠ æˆç»©å¯¹è¯æ¡†
+            var addScoreDialog = new AddScoreDialog
             {
-                Title = "Ìí¼Ó³É¼¨",
-                Content = "²åÈë³É¼¨¹¦ÄÜ´ıÊµÏÖ",
-                PrimaryButtonText = "È·¶¨",
                 XamlRoot = this.Content.XamlRoot
             };
 
-            _ = dialog.ShowAsync();
+            var result = await addScoreDialog.ShowAsync();
+            
+            // å¦‚æœç”¨æˆ·ç‚¹å‡»äº†ç¡®å®šæŒ‰é’®ï¼Œæ·»åŠ æ–°çš„æˆç»©è®°å½•
+            if (result == ContentDialogResult.Primary && addScoreDialog.NewScore != null)
+            {
+                // è·å–å­¦æœŸä¿¡æ¯
+                string semester = addScoreDialog.Semester;
+                
+                // å¦‚æœè¯¥å­¦æœŸä¸å­˜åœ¨ï¼Œåˆ›å»ºæ–°çš„å­¦æœŸè®°å½•
+                if (!_student.Scores.ContainsKey(semester))
+                {
+                    _student.Scores[semester] = new List<Score>();
+                }
+                
+                // æ·»åŠ æˆç»©åˆ°å¯¹åº”å­¦æœŸ
+                _student.Scores[semester].Add(addScoreDialog.NewScore);
+                
+                // é‡æ–°åŠ è½½æ•°æ®ä»¥æ›´æ–°ç•Œé¢
+                LoadScoreData();
+                CalculateSemesterSummaries();
+            }
         }
     }
 }

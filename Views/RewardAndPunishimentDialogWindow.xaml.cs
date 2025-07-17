@@ -107,19 +107,25 @@ namespace GFMS.Views
             }
         }
 
-        private void AddRewardPunishmentButton_Click(object sender, RoutedEventArgs e)
+        private async void AddRewardPunishmentButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: 实现添加奖惩记录的逻辑
-            // 目前先显示占位信息
-            var dialog = new ContentDialog
+            // 创建并显示添加奖惩记录对话框
+            var addRewardPunishmentDialog = new AddRewardPunishmentDialog
             {
-                Title = "添加奖惩记录",
-                Content = "添加奖惩记录功能待实现",
-                PrimaryButtonText = "确定",
                 XamlRoot = this.Content.XamlRoot
             };
 
-            _ = dialog.ShowAsync();
+            var result = await addRewardPunishmentDialog.ShowAsync();
+            
+            // 如果用户点击了确定按钮，添加新的奖惩记录
+            if (result == ContentDialogResult.Primary && addRewardPunishmentDialog.NewRewardPunishment != null)
+            {
+                // 添加到学生的奖惩记录列表
+                _student.RewardsAndPunishments.Add(addRewardPunishmentDialog.NewRewardPunishment);
+                
+                // 重新加载数据以更新界面
+                LoadRewardPunishmentData();
+            }
         }
     }
 }
