@@ -101,7 +101,7 @@ namespace GFMS.Services
             var student4 = new Student
             {
                 StudentId = "2022001",
-                Name = "赵六",
+                Name = "王五",
                 Gender = "男",
                 GraduationDate = new DateTime(2026, 6, 30),
                 Scores = new Dictionary<string, List<Score>>
@@ -120,8 +120,24 @@ namespace GFMS.Services
                         FileType = "毕业登记表",
                         FilePath = "/files/2022001/graduation_form.pdf",
                         StudentId = "2022001",
-                        State = FileState.已审核,
+                        State = FileState.已上传,
                         UpdatedAt = new DateTime(2024, 1, 15)
+                    },
+                    new StudentFile
+                    {
+                        FileType = "体检表",
+                        FilePath = "/files/2022001/medical_exam.pdf",
+                        StudentId = "2022001",
+                        State = FileState.已审核,
+                        UpdatedAt = new DateTime(2024, 1, 20)
+                    },
+                    new StudentFile
+                    {
+                        FileType = "实习报告",
+                        FilePath = "/files/2022001/internship_report.pdf",
+                        StudentId = "2022001",
+                        State = FileState.驳回,
+                        UpdatedAt = new DateTime(2024, 1, 25)
                     }
                 }
             };
@@ -136,7 +152,7 @@ namespace GFMS.Services
                 {
                     ["2022春季学期"] = new List<Score>
                     {
-                        new Score { Subject = "数据挖掘", ScoreValue = 93.5 },
+                        new Score { Subject = "人工智能", ScoreValue = 93.5 },
                         new Score { Subject = "机器学习", ScoreValue = 90.0 },
                         new Score { Subject = "统计学", ScoreValue = 86.5 }
                     }
@@ -149,6 +165,69 @@ namespace GFMS.Services
                         Details = "国家奖学金",
                         Date = new DateTime(2023, 10, 1)
                     }
+                },
+                Files = new List<StudentFile>
+                {
+                    new StudentFile
+                    {
+                        FileType = "毕业登记表",
+                        FilePath = "/files/2022002/graduation_form.pdf",
+                        StudentId = "2022002",
+                        State = FileState.已上传,
+                        UpdatedAt = new DateTime(2024, 2, 1)
+                    },
+                    new StudentFile
+                    {
+                        FileType = "体检表",
+                        FilePath = "/files/2022002/medical_exam.pdf",
+                        StudentId = "2022002",
+                        State = FileState.已上传,
+                        UpdatedAt = new DateTime(2024, 2, 5)
+                    }
+                }
+            };
+
+            var student6 = new Student
+            {
+                StudentId = "2022003",
+                Name = "孙八",
+                Gender = "男",
+                GraduationDate = new DateTime(2026, 6, 30),
+                Scores = new Dictionary<string, List<Score>>
+                {
+                    ["2022春季学期"] = new List<Score>
+                    {
+                        new Score { Subject = "软件工程", ScoreValue = 88.0 },
+                        new Score { Subject = "数据库系统", ScoreValue = 91.5 },
+                        new Score { Subject = "操作系统", ScoreValue = 85.0 }
+                    }
+                },
+                Files = new List<StudentFile>
+                {
+                    new StudentFile
+                    {
+                        FileType = "毕业登记表",
+                        FilePath = "/files/2022003/graduation_form.pdf",
+                        StudentId = "2022003",
+                        State = FileState.已上传,
+                        UpdatedAt = new DateTime(2024, 2, 10)
+                    },
+                    new StudentFile
+                    {
+                        FileType = "体检表",
+                        FilePath = "/files/2022003/medical_exam.pdf",
+                        StudentId = "2022003",
+                        State = FileState.已上传,
+                        UpdatedAt = new DateTime(2024, 2, 12)
+                    },
+                    new StudentFile
+                    {
+                        FileType = "实习报告",
+                        FilePath = "/files/2022003/internship_report.pdf",
+                        StudentId = "2022003",
+                        State = FileState.已上传,
+                        UpdatedAt = new DateTime(2024, 2, 15)
+                    }
                 }
             };
 
@@ -157,6 +236,7 @@ namespace GFMS.Services
             studentManager.AddStudent(student3);
             studentManager.AddStudent(student4);
             studentManager.AddStudent(student5);
+            studentManager.AddStudent(student6);
         }
 
         /// <summary>

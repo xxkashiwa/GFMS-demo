@@ -22,6 +22,10 @@
 		<None Remove="Views\RewardAndPunishimentDialogWindow.xaml" />
 		<None Remove="Views\ScoresDialogWindow.xaml" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Page Remove="Pages\FileDetailsWindow.xaml" />
+	  <Page Remove="Views\FileDetailsWindow.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
@@ -48,6 +52,14 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250606001" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Pages\FileDetailsWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
+	  <None Update="Views\FileDetailsWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Views\RewardAndPunishimentDialogWindow.xaml">
