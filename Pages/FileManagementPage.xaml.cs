@@ -1,5 +1,6 @@
-using GFMS.Models;
+ï»¿using GFMS.Models;
 using GFMS.Services;
+using GFMS.Views;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,6 +8,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +17,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage.Pickers;
+using Windows.Storage;
+using System.Diagnostics;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,43 +27,43 @@ using Windows.Foundation.Collections;
 namespace GFMS.Pages
 {
     /// <summary>
-    /// µµ°¸¹ÜÀíÒ³Ãæ£¬ÓÃÓÚ¹ÜÀíÑ§Éúµµ°¸ÎÄ¼ş
+    /// æ¡£æ¡ˆç®¡ç†é¡µé¢ï¼Œç”¨äºç®¡ç†å­¦ç”Ÿæ¡£æ¡ˆæ–‡ä»¶
     /// </summary>
     public sealed partial class FileManagementPage : Page
     {
         /// <summary>
-        /// ÓÃÓÚ°ó¶¨µ½ListViewµÄÑ§Éúµµ°¸¹ÜÀíÏî¼¯ºÏ
+        /// ç”¨äºç»‘å®šåˆ°ListViewçš„å­¦ç”Ÿæ¡£æ¡ˆç®¡ç†é¡¹é›†åˆ
         /// </summary>
         private ObservableCollection<StudentFileManagementItem> _fileManagementItems;
 
         public FileManagementPage()
         {
             InitializeComponent();
-            
-            // ³õÊ¼»¯µµ°¸¹ÜÀíÏî¼¯ºÏ
+
+            // åˆå§‹åŒ–æ¡£æ¡ˆç®¡ç†é¡¹é›†åˆ
             _fileManagementItems = new ObservableCollection<StudentFileManagementItem>();
-            
-            // ÉèÖÃListViewµÄÊı¾İÔ´
+
+            // è®¾ç½®ListViewçš„æ•°æ®æº
             FileManagementListView.ItemsSource = _fileManagementItems;
-            
-            // ¼ÓÔØÑ§ÉúÊı¾İ
+
+            // åŠ è½½å­¦ç”Ÿæ•°æ®
             LoadStudentData();
         }
 
         /// <summary>
-        /// Ò³Ãæµ¼º½Ê±µÄ´¦Àí
+        /// é¡µé¢å¯¼èˆªæ—¶çš„å¤„ç†
         /// </summary>
-        /// <param name="e">µ¼º½²ÎÊı</param>
+        /// <param name="e">å¯¼èˆªå‚æ•°</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            
-            // Ã¿´Î½øÈëÒ³ÃæÊ±Í¬²½Ñ§ÉúÊı¾İ
+
+            // æ¯æ¬¡è¿›å…¥é¡µé¢æ—¶åŒæ­¥å­¦ç”Ÿæ•°æ®
             SyncStudentData();
         }
 
         /// <summary>
-        /// ¼ÓÔØÑ§ÉúÊı¾İ
+        /// åŠ è½½å­¦ç”Ÿæ•°æ®
         /// </summary>
         private void LoadStudentData()
         {
@@ -66,19 +71,19 @@ namespace GFMS.Pages
         }
 
         /// <summary>
-        /// Í¬²½Ñ§ÉúÊı¾İ£¬¼ì²âStudentManagerÖĞµÄĞÂÑ§Éú²¢×·¼Óµ½ÁĞ±íÖĞ
+        /// åŒæ­¥å­¦ç”Ÿæ•°æ®ï¼Œæ£€æµ‹StudentManagerä¸­çš„æ–°å­¦ç”Ÿå¹¶è¿½åŠ åˆ°åˆ—è¡¨ä¸­
         /// </summary>
         private void SyncStudentData()
         {
-            // ±éÀúStudentManagerÖĞµÄËùÓĞÑ§Éú
+            // éå†StudentManagerä¸­çš„æ‰€æœ‰å­¦ç”Ÿ
             foreach (var student in StudentManager.Instance.Students)
             {
-                // ¼ì²éµ±Ç°¼¯ºÏÖĞÊÇ·ñÒÑ´æÔÚ¸ÃÑ§Éú
+                // æ£€æŸ¥å½“å‰é›†åˆä¸­æ˜¯å¦å·²å­˜åœ¨è¯¥å­¦ç”Ÿ
                 var existingItem = _fileManagementItems.FirstOrDefault(item => item.StudentId == student.StudentId);
-                
+
                 if (existingItem == null)
                 {
-                    // Èç¹û²»´æÔÚ£¬Ôò´´½¨ĞÂµÄµµ°¸¹ÜÀíÏî²¢Ìí¼Óµ½¼¯ºÏÖĞ
+                    // å¦‚æœä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»ºæ–°çš„æ¡£æ¡ˆç®¡ç†é¡¹å¹¶æ·»åŠ åˆ°é›†åˆä¸­
                     var newItem = new StudentFileManagementItem
                     {
                         Student = student
@@ -88,16 +93,16 @@ namespace GFMS.Pages
                 }
                 else
                 {
-                    // Èç¹û´æÔÚ£¬Ôò¸üĞÂÑ§ÉúĞÅÏ¢ºÍµµ°¸×´Ì¬
+                    // å¦‚æœå­˜åœ¨ï¼Œåˆ™æ›´æ–°å­¦ç”Ÿä¿¡æ¯å’Œæ¡£æ¡ˆçŠ¶æ€
                     existingItem.Student = student;
                     existingItem.UpdateFileStatuses();
                 }
             }
 
-            // ÒÆ³ıÔÚStudentManagerÖĞ²»´æÔÚµÄÑ§Éú
-            var itemsToRemove = _fileManagementItems.Where(item => 
+            // ç§»é™¤åœ¨StudentManagerä¸­ä¸å­˜åœ¨çš„å­¦ç”Ÿ
+            var itemsToRemove = _fileManagementItems.Where(item =>
                 !StudentManager.Instance.Students.Any(student => student.StudentId == item.StudentId)).ToList();
-            
+
             foreach (var item in itemsToRemove)
             {
                 _fileManagementItems.Remove(item);
@@ -105,63 +110,394 @@ namespace GFMS.Pages
         }
 
         /// <summary>
-        /// ±ÏÒµµÇ¼Ç±í°´Å¥µã»÷ÊÂ¼ş
+        /// æ£€æŸ¥å½“å‰ç”¨æˆ·æ˜¯å¦æœ‰Teacheræƒé™
+        /// </summary>
+        private bool IsTeacher()
+        {
+            return UserManager.Instance.IsAuthed &&
+                   UserManager.Instance.AuthedUser?.GrantedType == "Teacher";
+        }
+
+        /// <summary>
+        /// æ£€æŸ¥å½“å‰ç”¨æˆ·æ˜¯å¦æœ‰Adminæƒé™
+        /// </summary>
+        private bool IsAdmin()
+        {
+            return UserManager.Instance.IsAuthed &&
+                   UserManager.Instance.AuthedUser?.GrantedType == "Admin";
+        }
+
+        /// <summary>
+        /// å¤„ç†æ–‡ä»¶æ“ä½œï¼ˆä¸Šä¼ æˆ–æ‰“å¼€ï¼‰
+        /// </summary>
+        private async System.Threading.Tasks.Task HandleFileOperation(StudentFileManagementItem item, string fileType)
+        {
+            if (!IsTeacher() && !IsAdmin())
+            {
+                await ShowPermissionDeniedDialog();
+                return;
+            }
+
+            var existingFile = item.Student.Files.FirstOrDefault(f => f.FileType == fileType);
+
+            if (existingFile == null) // æœªä¸Šä¼ çŠ¶æ€
+            {
+                // ä¸Šä¼ æ–‡ä»¶
+                await UploadFile(item, fileType);
+            }
+            else
+            {
+                // æ‰“å¼€æ–‡ä»¶
+                await OpenFile(existingFile);
+            }
+        }
+
+        /// <summary>
+        /// ä¸Šä¼ æ–‡ä»¶
+        /// </summary>
+        private async System.Threading.Tasks.Task UploadFile(StudentFileManagementItem item, string fileType)
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+                picker.FileTypeFilter.Add(".pdf");
+
+                // è·å–å½“å‰çª—å£å¥æŸ„
+                var window = (Application.Current as App)?.MainWindow;
+                if (window != null)
+                {
+                    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+                    WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+                }
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // åˆ›å»ºç›®æ ‡æ–‡ä»¶å¤¹
+                    var documentsFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync(
+                        "StudentFiles", CreationCollisionOption.OpenIfExists);
+                    var studentFolder = await documentsFolder.CreateFolderAsync(
+                        item.Student.StudentId, CreationCollisionOption.OpenIfExists);
+
+                    // å¤åˆ¶æ–‡ä»¶åˆ°åº”ç”¨æ•°æ®æ–‡ä»¶å¤¹
+                    var fileName = $"{fileType}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+                    var destinationFile = await studentFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                    await file.CopyAndReplaceAsync(destinationFile);
+
+                    // æ›´æ–°æˆ–æ·»åŠ æ–‡ä»¶è®°å½•
+                    var existingFile = item.Student.Files.FirstOrDefault(f => f.FileType == fileType);
+                    if (existingFile != null)
+                    {
+                        existingFile.FilePath = destinationFile.Path;
+                        existingFile.UpdatedAt = DateTime.Now;
+                        existingFile.State = FileState.å·²ä¸Šä¼ ;
+                    }
+                    else
+                    {
+                        var studentFile = new StudentFile
+                        {
+                            StudentId = item.Student.StudentId,
+                            FileType = fileType,
+                            FilePath = destinationFile.Path,
+                            State = FileState.å·²ä¸Šä¼ ,
+                            UpdatedAt = DateTime.Now
+                        };
+                        item.Student.Files.Add(studentFile);
+                    }
+
+                    // æ›´æ–°æ˜¾ç¤ºçŠ¶æ€
+                    item.UpdateFileStatuses();
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        /// <summary>
+        /// æ‰“å¼€æ–‡ä»¶
+        /// </summary>
+        private async System.Threading.Tasks.Task OpenFile(StudentFile file)
+        {
+            try
+            {
+                if (File.Exists(file.FilePath))
+                {
+                    // ä½¿ç”¨é»˜è®¤ç¨‹åºæ‰“å¼€PDFæ–‡ä»¶
+                    var process = new Process();
+                    process.StartInfo.FileName = file.FilePath;
+                    process.StartInfo.UseShellExecute = true;
+                    process.Start();
+                }
+                else
+                {
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        /// <summary>
+        /// æ˜¾ç¤ºæƒé™ä¸è¶³å¯¹è¯æ¡†
+        /// </summary>
+        private async System.Threading.Tasks.Task ShowPermissionDeniedDialog()
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = "æƒé™ä¸è¶³",
+                Content = "æ‚¨æ²¡æœ‰æ‰§è¡Œæ­¤æ“ä½œçš„æƒé™ã€‚",
+                CloseButtonText = "ç¡®å®š",
+                XamlRoot = this.XamlRoot
+            };
+            await dialog.ShowAsync();
+        }
+
+
+        /// <summary>
+        /// æ¯•ä¸šç™»è®°è¡¨æŒ‰é’®ç‚¹å‡»äº‹ä»¶
         /// </summary>
         private void GraduationFormButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is StudentFileManagementItem item)
             {
-                // TODO: ÊµÏÖ±ÏÒµµÇ¼Ç±íÉÏ´«¹¦ÄÜ
-                // ÕâÀï¿ÉÒÔÊµÏÖÎÄ¼şÉÏ´«Âß¼­
-                
-                // Ê¾Àı£ºÌí¼ÓÒ»¸ö±ÏÒµµÇ¼Ç±íÎÄ¼ş¼ÇÂ¼
-                // var file = new StudentFile
-                // {
-                //     StudentId = item.Student.StudentId,
-                //     FileType = "±ÏÒµµÇ¼Ç±í",
-                //     FilePath = "path/to/graduation/form.pdf",
-                //     State = FileState.ÒÑÉÏ´«,
-                //     UpdatedAt = DateTime.Now
-                // };
-                // item.Student.Files.Add(file);
-                // item.UpdateFileStatuses();
+                _ = HandleFileOperation(item, "æ¯•ä¸šç™»è®°è¡¨");
             }
         }
 
         /// <summary>
-        /// Ìå¼ì±í°´Å¥µã»÷ÊÂ¼ş
+        /// ä½“æ£€è¡¨æŒ‰é’®ç‚¹å‡»äº‹ä»¶
         /// </summary>
         private void MedicalExamButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is StudentFileManagementItem item)
             {
-                // TODO: ÊµÏÖÌå¼ì±íÉÏ´«¹¦ÄÜ
-                // ÕâÀï¿ÉÒÔÊµÏÖÎÄ¼şÉÏ´«Âß¼­
+                _ = HandleFileOperation(item, "ä½“æ£€è¡¨");
             }
         }
 
         /// <summary>
-        /// ÊµÏ°±¨¸æ°´Å¥µã»÷ÊÂ¼ş
+        /// å®ä¹ æŠ¥å‘ŠæŒ‰é’®ç‚¹å‡»äº‹ä»¶
         /// </summary>
         private void InternshipReportButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is StudentFileManagementItem item)
             {
-                // TODO: ÊµÏÖÊµÏ°±¨¸æÉÏ´«¹¦ÄÜ
-                // ÕâÀï¿ÉÒÔÊµÏÖÎÄ¼şÉÏ´«Âß¼­
+                _ = HandleFileOperation(item, "å®ä¹ æŠ¥å‘Š");
             }
         }
 
         /// <summary>
-        /// µµ°¸ÏêÏ¸°´Å¥µã»÷ÊÂ¼ş
+        /// æ¡£æ¡ˆè¯¦ç»†æŒ‰é’®ç‚¹å‡»äº‹ä»¶
         /// </summary>
-        private void FileDetailsButton_Click(object sender, RoutedEventArgs e)
+        private async void FileDetailsButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && button.Tag is StudentFileManagementItem item)
             {
-                // TODO: ÊµÏÖµµ°¸ÏêÏ¸²é¿´¹¦ÄÜ
-                // ÕâÀï¿ÉÒÔÏÔÊ¾¸ÃÑ§ÉúµÄËùÓĞµµ°¸ÎÄ¼şÏêÇé
+                if (IsTeacher())
+                {
+                    await ShowPermissionDeniedDialog();
+                    return;
+                }
+
+                if (IsAdmin())
+                {
+                    await ShowFileDetailsDialog(item);
+                }
+                else
+                {
+                    await ShowPermissionDeniedDialog();
+                }
             }
+        }
+
+        /// <summary>
+        /// æ˜¾ç¤ºæ¡£æ¡ˆè¯¦ç»†ä¿¡æ¯å¯¹è¯æ¡†
+        /// </summary>
+        private async System.Threading.Tasks.Task ShowFileDetailsDialog(StudentFileManagementItem item)
+        {
+            // åˆ›å»ºæ–‡ä»¶è¯¦ç»†ä¿¡æ¯çš„å†…å®¹
+            var contentPanel = new StackPanel { Spacing = 12 };
+
+            // å­¦ç”Ÿä¿¡æ¯
+            var studentInfoPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 16,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+            studentInfoPanel.Children.Add(new TextBlock { Text = "å­¦å·:", FontWeight = FontWeights.SemiBold });
+            studentInfoPanel.Children.Add(new TextBlock { Text = item.Student.StudentId });
+            studentInfoPanel.Children.Add(new TextBlock { Text = "å§“å:", FontWeight = FontWeights.SemiBold, Margin = new Thickness(32, 0, 0, 0) });
+            studentInfoPanel.Children.Add(new TextBlock { Text = item.Student.Name });
+            contentPanel.Children.Add(studentInfoPanel);
+
+            // è¡¨å¤´
+            var headerGrid = new Grid
+            {
+                Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
+                CornerRadius = new CornerRadius(4),
+                Padding = new Thickness(16, 8, 16, 8),
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) });
+
+            var fileTypeHeader = new TextBlock { Text = "æ–‡ä»¶ç±»å‹", FontWeight = FontWeights.SemiBold };
+            var uploadTimeHeader = new TextBlock { Text = "ä¸Šä¼ æ—¶é—´", FontWeight = FontWeights.SemiBold };
+            var statusHeader = new TextBlock { Text = "å½“å‰çŠ¶æ€", FontWeight = FontWeights.SemiBold };
+            var operationHeader = new TextBlock { Text = "æ“ä½œ", FontWeight = FontWeights.SemiBold };
+
+            Grid.SetColumn(fileTypeHeader, 0);
+            Grid.SetColumn(uploadTimeHeader, 1);
+            Grid.SetColumn(statusHeader, 2);
+            Grid.SetColumn(operationHeader, 3);
+
+            headerGrid.Children.Add(fileTypeHeader);
+            headerGrid.Children.Add(uploadTimeHeader);
+            headerGrid.Children.Add(statusHeader);
+            headerGrid.Children.Add(operationHeader);
+            contentPanel.Children.Add(headerGrid);
+
+            // æ–‡ä»¶åˆ—è¡¨
+            var uploadedFiles = item.Student.Files.Where(f => !string.IsNullOrEmpty(f.FilePath)).ToList();
+
+            foreach (var file in uploadedFiles)
+            {
+                var fileGrid = new Grid
+                {
+                    Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["CardBackgroundFillColorSecondaryBrush"],
+                    CornerRadius = new CornerRadius(4),
+                    Padding = new Thickness(16, 8, 16, 8),
+                    Margin = new Thickness(0, 2, 0, 2),
+                    MinHeight = 48
+                };
+                fileGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+                fileGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+                fileGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+                fileGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) });
+
+                var fileTypeText = new TextBlock
+                {
+                    Text = file.FileType,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 14
+                };
+                var uploadTimeText = new TextBlock
+                {
+                    Text = file.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 14
+                };
+                var statusText = new TextBlock
+                {
+                    Text = GetFileStateDisplayName(file.State),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.SemiBold,
+                    FontSize = 14
+                };
+
+                var operationPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Spacing = 6
+                };
+
+                var approveButton = new Button
+                {
+                    Content = "å·²å®¡æ ¸",
+                    Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AccentFillColorDefaultBrush"],
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White),
+                    Padding = new Thickness(8, 4, 8, 4),
+                    CornerRadius = new CornerRadius(4),
+                    FontSize = 12,
+                    Tag = file
+                };
+                approveButton.Click += async (s, args) =>
+                {
+                    file.State = FileState.å·²å®¡æ ¸;
+                    statusText.Text = GetFileStateDisplayName(file.State);
+                    item.UpdateFileStatuses();
+                };
+
+                var rejectButton = new Button
+                {
+                    Content = "é©³å›",
+                    Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["SystemFillColorCriticalBrush"],
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White),
+                    Padding = new Thickness(8, 4, 8, 4),
+                    CornerRadius = new CornerRadius(4),
+                    FontSize = 12,
+                    Tag = file
+                };
+                rejectButton.Click += async (s, args) =>
+                {
+                    file.State = FileState.é©³å›;
+                    statusText.Text = GetFileStateDisplayName(file.State);
+                    item.UpdateFileStatuses();
+                };
+
+                operationPanel.Children.Add(approveButton);
+                operationPanel.Children.Add(rejectButton);
+
+                Grid.SetColumn(fileTypeText, 0);
+                Grid.SetColumn(uploadTimeText, 1);
+                Grid.SetColumn(statusText, 2);
+                Grid.SetColumn(operationPanel, 3);
+
+                fileGrid.Children.Add(fileTypeText);
+                fileGrid.Children.Add(uploadTimeText);
+                fileGrid.Children.Add(statusText);
+                fileGrid.Children.Add(operationPanel);
+
+                contentPanel.Children.Add(fileGrid);
+            }
+
+            if (uploadedFiles.Count == 0)
+            {
+                var noFilesText = new TextBlock
+                {
+                    Text = "è¯¥å­¦ç”Ÿæš‚æœªä¸Šä¼ ä»»ä½•æ¡£æ¡ˆæ–‡ä»¶",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    FontStyle = Windows.UI.Text.FontStyle.Italic,
+                    Margin = new Thickness(0, 20, 0, 20)
+                };
+                contentPanel.Children.Add(noFilesText);
+            }
+
+            var scrollViewer = new ScrollViewer
+            {
+                Content = contentPanel,
+                MaxHeight = 400
+            };
+
+            var dialog = new ContentDialog()
+            {
+                Title = $"æ¡£æ¡ˆè¯¦ç»†ä¿¡æ¯ - {item.Student.Name} ({item.Student.StudentId})",
+                Content = scrollViewer,
+                CloseButtonText = "å…³é—­",
+                XamlRoot = this.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
+
+        /// <summary>
+        /// è·å–æ–‡ä»¶çŠ¶æ€æ˜¾ç¤ºåç§°
+        /// </summary>
+        private string GetFileStateDisplayName(FileState state)
+        {
+            return state switch
+            {
+                FileState.å·²ä¸Šä¼  => "å·²ä¸Šä¼ ",
+                FileState.å·²å®¡æ ¸ => "å·²å®¡æ ¸",
+                FileState.é©³å› => "é©³å›",
+                _ => "æœªçŸ¥"
+            };
         }
     }
 }

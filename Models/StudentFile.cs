@@ -12,7 +12,7 @@ namespace GFMS.Models
     public class StudentFile
     {
         /// <summary>
-        /// 文件类型
+        /// 文件类型，例如毕业登记表/体检表/实习报告
         /// </summary>
         public string FileType { get; set; } = string.Empty;
 
