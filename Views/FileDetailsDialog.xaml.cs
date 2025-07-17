@@ -1,9 +1,7 @@
 using GFMS.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Text;
-using System;
 using System.Linq;
 
 namespace GFMS.Views
@@ -178,13 +176,16 @@ namespace GFMS.Views
         {
             // 更新文件状态
             file.State = FileState.已审核;
-            
+
             // 更新学生档案管理项状态
             _studentItem.UpdateFileStatuses();
-            
+
+            // 强制刷新父页面的数据
+            RefreshParentPageData();
+
             // 从界面中移除该行
             FileListPanel.Children.Remove(fileGrid);
-            
+
             // 检查是否还有文件，如果没有则显示无文件提示
             CheckAndShowNoFilesMessage();
         }
@@ -198,15 +199,37 @@ namespace GFMS.Views
         {
             // 更新文件状态
             file.State = FileState.驳回;
-            
+
             // 更新学生档案管理项状态
             _studentItem.UpdateFileStatuses();
-            
+
+            // 强制刷新父页面的数据
+            RefreshParentPageData();
+
             // 从界面中移除该行
             FileListPanel.Children.Remove(fileGrid);
-            
+
             // 检查是否还有文件，如果没有则显示无文件提示
             CheckAndShowNoFilesMessage();
+        }
+
+
+        /// <summary>
+        /// 刷新父页面数据
+        /// </summary>
+        private void RefreshParentPageData()
+        {
+            // 在 WinUI 3 中使用 Application.Current 来获取当前应用程序实例
+            var app = Application.Current as App;
+            var window = app?.MainWindow;
+
+            if (window?.Content is Frame frame && frame.Content is GFMS.Pages.FileManagementPage fileManagementPage)
+            {
+                // 通过反射调用私有方法 SyncStudentData
+                var method = fileManagementPage.GetType().GetMethod("SyncStudentData",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                method?.Invoke(fileManagementPage, null);
+            }
         }
 
         /// <summary>
