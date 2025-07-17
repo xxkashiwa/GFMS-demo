@@ -420,8 +420,22 @@ namespace GFMS.Pages
                 approveButton.Click += async (s, args) =>
                 {
                     file.State = FileState.已审核;
-                    statusText.Text = GetFileStateDisplayName(file.State);
                     item.UpdateFileStatuses();
+                    // 从对话框中移除该行
+                    contentPanel.Children.Remove(fileGrid);
+                    
+                    // 如果没有更多文件了，显示无文件提示
+                    if (contentPanel.Children.Count <= 2) // 只剩学生信息和表头
+                    {
+                        var noFilesText = new TextBlock
+                        {
+                            Text = "该学生暂未上传任何档案文件",
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            FontStyle = Windows.UI.Text.FontStyle.Italic,
+                            Margin = new Thickness(0, 20, 0, 20)
+                        };
+                        contentPanel.Children.Add(noFilesText);
+                    }
                 };
 
                 var rejectButton = new Button
@@ -437,8 +451,22 @@ namespace GFMS.Pages
                 rejectButton.Click += async (s, args) =>
                 {
                     file.State = FileState.驳回;
-                    statusText.Text = GetFileStateDisplayName(file.State);
                     item.UpdateFileStatuses();
+                    // 从对话框中移除该行
+                    contentPanel.Children.Remove(fileGrid);
+                    
+                    // 如果没有更多文件了，显示无文件提示
+                    if (contentPanel.Children.Count <= 2) // 只剩学生信息和表头
+                    {
+                        var noFilesText = new TextBlock
+                        {
+                            Text = "该学生暂未上传任何档案文件",
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            FontStyle = Windows.UI.Text.FontStyle.Italic,
+                            Margin = new Thickness(0, 20, 0, 20)
+                        };
+                        contentPanel.Children.Add(noFilesText);
+                    }
                 };
 
                 operationPanel.Children.Add(approveButton);
